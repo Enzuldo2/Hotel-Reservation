@@ -145,12 +145,15 @@ Hotel "1" *-- "1..*"  Admin: have
 Hotel "1" *-- "0..*"  Client: have
 Hotel "1" o-- "0..*"  DefaultRoom: have
 Hotel "1" o-- "0..*"  DefaultService: have
-Hotel "1" o-- "0..*"  DefaultReservation: have
+
 
 Admin "1" --- "0..*"  Service: manages
 Admin "1" --- "0..*"  Room: manages
-Admin "1" --- "0..*"  Reservation: manages
+Admin "1" --- "0..*"  ReservationState: manages
 Admin "1" --- "1"     Hotel: manages
+Admin "1" --- "0..*"  ClientDAO: manages
+
+ClientDAO "1" *-- "1" ConexaoUtil: have
 
 
 Client "1" *-- "0..*" Member: have
