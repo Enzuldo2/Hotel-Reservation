@@ -138,6 +138,23 @@ class ClientDAO {
     +readClientList(): list<Client>
 }
 
+class Vagas{
+    +reservada : ReservationState
+    +Date: Date
+    Room: Room
+    Client: Client
+
+    +updateReservationState(): ReservationState
+    +getReservationState(): ReservationState
+    +setReservationState(): void
+    +setRoom(): void
+    +getRoom(): Room
+    +setClient(): void
+    +getClient(): Client
+    +setDate(): void
+    +getDate(): Date
+}
+
 
 
 Hotel "1" o-- "1"     Address: have
@@ -151,10 +168,16 @@ Admin "1" --- "0..*"  Service: manages
 Admin "1" --- "0..*"  Room: manages
 Admin "1" --- "0..*"  ReservationState: manages
 Admin "1" --- "1"     Hotel: manages
-Admin "1" --- "0..*"  ClientDAO: manages
+Admin "1" --- "1"  ClientDAO: manages
+Admin "1" --- "0..*" Vagas: manages
 
 ClientDAO "1" *-- "1" ConexaoUtil: have
 
+Vagas "1" --- "1" ReservationState: have
+Vagas "1" --- "1" Room: have
+Vagas "1" --- "1" Client: have
 
 Client "1" *-- "0..*" Member: have
+Client "1" --- "1" ReservationState: have
+
 @enduml
