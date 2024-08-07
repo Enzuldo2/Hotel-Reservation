@@ -121,10 +121,10 @@ interface ReservationState <<State>> {
     +updateReservation(String date, String time, String room, String user): Reservation
 }
 
-class Reserved <<Singleton>> implements Reservation {
+class Reserved <<Singleton>> implements ReservationState {
 }
 
-class Canceled <<Singleton>> implements Reservation {
+class Canceled <<Singleton>> implements ReservationState {
 }
 
 class ConexaoUtil {
@@ -166,7 +166,6 @@ Hotel "1" o-- "0..*"  DefaultService: have
 
 Admin "1" --- "0..*"  Service: manages
 Admin "1" --- "0..*"  Room: manages
-Admin "1" --- "0..*"  ReservationState: manages
 Admin "1" --- "1"     Hotel: manages
 Admin "1" --- "1"  ClientDAO: manages
 Admin "1" --- "0..*" Vagas: manages
