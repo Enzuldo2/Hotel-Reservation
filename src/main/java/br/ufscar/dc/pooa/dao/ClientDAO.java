@@ -1,63 +1,57 @@
 package br.ufscar.dc.pooa.dao;
 
-import br.ufscar.dc.pooa.domain.users.Client;
+import br.ufscar.dc.pooa.Model.domain.users.Client;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
 
 public class ClientDAO {
 
     public static ArrayList<Client> readClientslist() throws SQLException, ClassNotFoundException {
         ArrayList<Client> clients = new ArrayList<>();
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "SELECT * FROM client WHERE id = 1";
+        String query = "SELECT * FROM client";
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery();
         while (rs.next()) {
-            int isSuperUser = rs.getInt("isSuperUser");
-            if(isSuperUser == 1) {
-                continue;
-            }
             Client client = new Client();
             client.setId(rs.getInt("id"));
             client.setName(rs.getString("name"));
             client.setPassword(rs.getString("password"));
             client.setEmail(rs.getString("email"));
-            client.setSuperUser(isSuperUser);
-            client.setActive(rs.getInt("isActive"));
+            client.setBirthday(rs.getDate("birthday"));
             clients.add(client);
         }
         connection.close();
         return clients;
     }
 
-
-    public static void createClient(String name, String password , String email, int isSuperUser , int isActive) throws SQLException, ClassNotFoundException {
+    public static void createClient(String name, String password, String email, Date birthday) throws SQLException, ClassNotFoundException, ParseException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "INSERT INTO client (name, password, email, isSuperuser, isActive) VALUES (?, ?, ?, ?, ?)";
+        String query = "INSERT INTO client (name, password, email, birthday) VALUES (?, ?, ?, ?)";
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setString(1, name);
         pst.setString(2, password);
         pst.setString(3, email);
-        pst.setInt(4, isSuperUser);
-        pst.setInt(5, isActive);
+        pst.setDate(4, new java.sql.Date(birthday.getTime()));
         pst.executeUpdate();
-
         connection.close();
     }
 
-    public static void update(int id,String name , String password , String email, int isSuperUser , int isActive ) throws SQLException, ClassNotFoundException {
+    public static void update(int id, String name, String password, String email, Date birthday) throws SQLException, ClassNotFoundException, ParseException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "UPDATE client SET name = ?, password = ?, email = ?, isSuperUser = ?, isActive = ? WHERE id = ?";
+        String query = "UPDATE client SET name = ?, password = ?, email = ?, birthday = ?, isSuperUser = ?, isActive = ? WHERE id = ?";
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setString(1, name);
         pst.setString(2, password);
         pst.setString(3, email);
-        pst.setInt(4, isSuperUser);
-        pst.setInt(5, isActive);
+        pst.setDate(4, new java.sql.Date(birthday.getTime()));
         pst.setInt(6, id);
         pst.executeUpdate();
         connection.close();
@@ -72,5 +66,19 @@ public class ClientDAO {
         connection.close();
     }
 
-}
+    public static boolean userExists(String username, String password, String email, Date birthday) throws SQLException, ClassNotFoundException {
+        Connection connection = ConexaoUtil.getInstance().Connection();
+        String query = "SELECT COUNT(*) FROM client WHERE name = ? AND password = ? AND email = ? AND birthday = ?";
+        PreparedStatement pst = connection.prepareStatement(query);
+        pst.setString(1, username);
+        pst.setString(2, password);
+        pst.setString(3, email);
+        pst.setDate(4, new java.sql.Date(birthday.getTime()));
 
+        ResultSet rs = pst.executeQuery();
+        rs.next();
+        boolean clientExists = rs.getInt(1) > 0;
+        connection.close();
+        return !clientExists;
+    }
+}

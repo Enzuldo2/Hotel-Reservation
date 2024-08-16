@@ -1,11 +1,15 @@
 package br.ufscar.dc.pooa.View;
 
-import br.ufscar.dc.pooa.domain.users.Admin;
+import br.ufscar.dc.pooa.Model.domain.users.Admin;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class VagasView {
     private JFrame frame;
@@ -57,7 +61,15 @@ public class VagasView {
         createAccountItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                showCreateAccountDialog();
+                try {
+                    showCreateAccountDialog();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                } catch (ParseException ex) {
+                    throw new RuntimeException(ex);
+                }
             }
         });
 
@@ -86,18 +98,42 @@ public class VagasView {
         }
     }
 
-    private void showCreateAccountDialog() {
+    private void showCreateAccountDialog() throws SQLException, ClassNotFoundException, ParseException {
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
+        JPasswordField confirmPasswordField = new JPasswordField();
+        JTextField emailField = new JTextField();
+        JTextField birthdayField = new JTextField();
         Object[] message = new Object[] {
                 "Username:", usernameField,
-                "Password:", passwordField
+                "Password:", passwordField,
+                "Confirm Password", confirmPasswordField,
+                "Email:", emailField,
+                "Birthday:", birthdayField
         };
         int option = JOptionPane.showConfirmDialog(null, message, "Create Account", JOptionPane.OK_CANCEL_OPTION);
         if (option == JOptionPane.OK_OPTION) {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
-            // Handle account creation logic here
+            String confirmPassword = new String(confirmPasswordField.getPassword());
+            String email = emailField.getText();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date birthday = null;
+            try {
+                birthday = dateFormat.parse(birthdayField.getText());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            Admin admin = Admin.getInstance();
+            if (password.equals(confirmPassword)) {
+                if (admin.createUser(username, password, email, birthday)) {
+                    JOptionPane.showMessageDialog(null, "Account created successfully!");
+                } else {
+                    JOptionPane.showMessageDialog(null, "Failed to create account!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Passwords do not match!");
+            }
         }
     }
 
