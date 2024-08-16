@@ -11,7 +11,7 @@ usando como MySQL como Banco de dados, usando a ferramenta XAMP para gerir o ban
     - A reciproca não é verdadeira.
 
 ### Diagrama de classes
-![diagrama](http://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/Enzuldo2/Hotel-Reservation/main/diagrama_de_classes.iuml)
+Esta no arquivo Astah-UML
 
 
 
