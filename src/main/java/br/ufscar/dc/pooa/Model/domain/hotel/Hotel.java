@@ -1,15 +1,24 @@
 package br.ufscar.dc.pooa.Model.domain.hotel;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import br.ufscar.dc.pooa.Model.domain.DefaultService;
+import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
 import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
-import br.ufscar.dc.pooa.Model.domain.users.Admin;
+import br.ufscar.dc.pooa.Model.domain.rooms.FamilyRoom;
+import br.ufscar.dc.pooa.Model.domain.rooms.SingleRoom;
+import br.ufscar.dc.pooa.Model.domain.rooms.SuiteRoom;
 import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
 import br.ufscar.dc.pooa.dao.ClientDAO;
+import br.ufscar.dc.pooa.dao.QuartoDAO;
+import br.ufscar.dc.pooa.dao.ReservaDAO;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Hotel {
     private static Hotel instance = null;
@@ -18,6 +27,7 @@ public class Hotel {
     private List<Client> clients;
     private List<DefaultRoom> rooms;
     private List<DefaultService> services;
+    private List<Reserva> reservas;
 
 
     private Hotel() throws SQLException, ClassNotFoundException {
@@ -25,6 +35,9 @@ public class Hotel {
         this.rooms = new ArrayList<>();
         this.services = new ArrayList<>();
         clients = ClientDAO.readClientslist();
+        this.reservas = new ArrayList<>();
+        reservas = ReservaDAO.readReservas();
+        rooms = QuartoDAO.readRooms();
     }
 
     public static Hotel getInstance() throws SQLException, ClassNotFoundException {
@@ -32,6 +45,15 @@ public class Hotel {
             instance = new Hotel();
         }
         return instance;
+    }
+
+    public Client haveClient(String username,String password) {
+        for (Client client : clients) {
+            if (client.getName().equals(username) && client.getPassword().equals(password)) {
+                return client;
+            }
+        }
+        return null;
     }
 
     public String getName() {
@@ -105,4 +127,65 @@ public class Hotel {
         this.services.remove(service);
     }
 
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void addReserva(Reserva reserva) {
+        this.reservas.add(reserva);
+    }
+
+    public void removeReserva(Reserva reserva) {
+        this.reservas.remove(reserva);
+    }
+
+    public boolean verifica_Reserva(Date data_inicial, Date data_fim, String tipo_quarto) {
+        int quantidade_quartos = quantidade_quartos_para_tipo(tipo_quarto);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String dataInicialStr = dateFormat.format(data_inicial);
+        String dataFimStr = dateFormat.format(data_fim);
+
+        for (Reserva reserva : reservas) {
+            String dataReservaInicialStr = dateFormat.format(reserva.getDataEntrada());
+            String dataReservaFimStr = dateFormat.format(reserva.getDataSaida());
+            if (reserva.getCategoria().getRoomType().equals(tipo_quarto) &&
+                    dataInicialStr.equals(dataReservaInicialStr) &&
+                    dataFimStr.equals(dataReservaFimStr) &&
+                    reserva.getReserved()) {
+                quantidade_quartos--;
+            }
+        }
+        return quantidade_quartos > 0;
+    }
+    public int quantidade_quartos_para_tipo(String tipo_quarto){
+        int quantidade_quartos = 0;
+        for (DefaultRoom room : rooms) {
+            if (room.getBridgeroom().getRoomType().equals(tipo_quarto)) {
+                quantidade_quartos++;
+            }
+        }
+        return quantidade_quartos;
+    }
+
+    public Bridge_Room getBridgeRoom(String tipo_quarto){
+        switch (tipo_quarto) {
+            case "Single":
+                return new SingleRoom();
+            case "Suite":
+                return new SuiteRoom();
+            case "Family":
+                return new FamilyRoom();
+        }
+        return null;
+    }
+
+
+    public Object getClient(int idCliente) {
+        for (Client client : clients) {
+            if (client.getId() == idCliente) {
+                return client;
+            }
+        }
+        return null;
+    }
 }

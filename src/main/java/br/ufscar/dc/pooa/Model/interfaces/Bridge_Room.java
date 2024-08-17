@@ -5,4 +5,5 @@ public interface Bridge_Room {
     boolean update_Tipo_Room(Bridge_Room bridge_room);
     boolean delete_Tipo_Room();
     String getRoomType();
+    Float getRoomPrice();
 }

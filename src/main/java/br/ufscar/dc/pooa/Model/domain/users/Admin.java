@@ -1,50 +1,53 @@
 package br.ufscar.dc.pooa.Model.domain.users;
 
+import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
 import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.FamilyRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.SingleRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.SuiteRoom;
 import br.ufscar.dc.pooa.dao.ClientDAO;
 import br.ufscar.dc.pooa.Model.domain.hotel.Hotel;
-import br.ufscar.dc.pooa.Model.domain.reservation.Reserved;
 import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
+import br.ufscar.dc.pooa.dao.QuartoDAO;
+import br.ufscar.dc.pooa.dao.ReservaDAO;
 
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Admin {
 
-    private static Admin instance = null;
+    private static final Logger logger = Logger.getLogger(Admin.class.getName());
 
     private Admin() {
     }
 
-    //Singleton
-    public static synchronized Admin getInstance() {
-        if(instance == null) {
-            instance = new Admin();
-        }
-        return instance;
+    private static class AdminHolder {
+        private static final Admin INSTANCE = new Admin();
     }
-    
+
+    public static Admin getInstance() {
+        return AdminHolder.INSTANCE;
+    }
+
     public boolean createUser(String username, String password, String email, Date birthday) throws SQLException, ClassNotFoundException, ParseException {
-        boolean created = ClientDAO.userExists(username, password, email, birthday);
-        if(created) {
-            Client user = new Client(username, password, email, birthday);
-            Hotel.getInstance().getClients().add((Client) user);
-            ClientDAO.createClient(username, password, email, birthday);
+        if (ClientDAO.userExists(username, password, email, birthday)) {
+            logger.info("User already exists");
+            return false;
         }
-        return created;
+        Client user = new Client(username, password, email, birthday);
+        Hotel.getInstance().addClient(user);
+        ClientDAO.createClient(username, password, email, birthday);
+        logger.info("User created successfully");
+        return true;
     }
 
     public Person getUser(int userId) throws SQLException, ClassNotFoundException {
-        Hotel hotel = Hotel.getInstance();
-        List<Client> clients = hotel.getClients();
-        for(Client client : clients) {
-            if(client.getId() == userId) {
+        for (Client client : Hotel.getInstance().getClients()) {
+            if (client.getId() == userId) {
                 return client;
             }
         }
@@ -52,79 +55,72 @@ public class Admin {
     }
 
     public boolean updateUser(Person user) throws SQLException, ClassNotFoundException {
-        boolean updated = false;
-        Hotel hotel = Hotel.getInstance();
-        List<Client> clients = hotel.getClients();
-        for(Client client : clients) {
-            if(client.getId() == ((Client)user).getId()) {
+        List<Client> clients = Hotel.getInstance().getClients();
+        for (Client client : clients) {
+            if (client.getId() == user.getPersonId()) {
                 clients.remove(client);
                 clients.add((Client) user);
-                updated = true;
-                break;
+                return true;
             }
         }
-        return updated;
+        return false;
     }
 
     public boolean deleteUser(int userId) throws SQLException, ClassNotFoundException {
-        boolean deleted = false;
-        Hotel hotel = Hotel.getInstance();
-        List<Client> clients = hotel.getClients();
-        for(Client client : clients) {
-            if(client.getId() == userId) {
+        List<Client> clients = Hotel.getInstance().getClients();
+        for (Client client : clients) {
+            if (client.getId() == userId) {
                 clients.remove(client);
-                deleted = true;
-                break;
+                return true;
             }
         }
-        return deleted;
+        return false;
     }
 
-    public List<Person> getUsers() throws SQLException, ClassNotFoundException {
-        List<Client> clientList = Hotel.getInstance().getClients();
-        List<Person> userList = new ArrayList<>();
-        for (Client client : clientList) {
-            userList.add(client);
-        }
+    public List<Client> getUsers() throws SQLException, ClassNotFoundException {
+        List<Client> userList = Hotel.getInstance().getClients();
         return userList;
     }
 
-    public boolean createRoom(String roomType, int roomCapacity, float roomPrice, String roomDescription, float roomLength, float roomWidth, float roomHeight) {
+    public boolean createRoom(String roomType, int roomCapacity,  String roomDescription, float roomLength, float roomWidth, float roomHeight) throws SQLException, ClassNotFoundException {
         boolean created = false;
-        if(roomType.equals("single")) {
+        if(roomType.equals("Single")) {
             Bridge_Room bridge_room = new SingleRoom();
-            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomPrice, roomDescription, roomLength, roomWidth, roomHeight);
-            //colocar no BD
+            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity,  roomDescription, roomLength, roomWidth, roomHeight);
+            Hotel.getInstance().addRoom(room);
+            QuartoDAO.createRoom(roomType, roomDescription, roomCapacity, roomHeight, roomLength, roomWidth);
+            created = true;
         }
-        else if(roomType.equals("suite")) {
+        else if(roomType.equals("Suite")) {
             Bridge_Room bridge_room = new SuiteRoom();
-            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomPrice, roomDescription, roomLength, roomWidth, roomHeight);
-            // colocar no BD
+            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
+            Hotel.getInstance().addRoom(room);
+            QuartoDAO.createRoom(roomType, roomDescription, roomCapacity, roomHeight, roomLength, roomWidth);
+            created = true;
         }
-        else if(roomType.equals("family")) {
-            Bridge_Room bridge_room = new FamilyRoom();
-            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomPrice, roomDescription, roomLength, roomWidth, roomHeight);
-            // colocar no BD
+        else if(roomType.equals("Family")) {
+            Bridge_Room bridge_room = new FamilyRoom( );
+            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
+            Hotel.getInstance().addRoom(room);
+            QuartoDAO.createRoom(roomType, roomDescription, roomCapacity, roomHeight, roomLength, roomWidth);
+            created = true;
         }
         return created;
     }
 
-    public boolean makeReservation(int userId, int roomId) throws SQLException, ClassNotFoundException {
-        boolean reserved = false;
-        Hotel hotel = Hotel.getInstance();
-        List<Client> clients = hotel.getClients();
-        List<DefaultRoom> rooms = hotel.getRooms();
-        for(Client client : clients) {
-            if(client.getId() == userId) {
-                for(DefaultRoom room : rooms) {
-                    if(room.getId() == roomId) {
-                        room.setReserved(Reserved.getInstance());
-                        reserved = true;
-                        break;
-                    }
-                }
-            }
+    public boolean makeReservation(Client user, String dataAtual, Date data_inicial, Date data_fim , String tipo_quarto) throws SQLException, ClassNotFoundException, ParseException {
+        boolean created = false;
+        var hotel = Hotel.getInstance();
+        var worked = hotel.verifica_Reserva(data_inicial, data_fim, tipo_quarto);
+        if (worked) {
+            var tipo = hotel.getBridgeRoom(tipo_quarto);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date data_reserva = dateFormat.parse(dataAtual);
+            Reserva reserva = new Reserva(user,tipo, data_reserva ,data_inicial, data_fim, true );
+            Hotel.getInstance().addReserva(reserva);
+            ReservaDAO.createReserva(user.getPersonId(), new java.sql.Date(data_reserva.getTime()), new java.sql.Date(data_inicial.getTime()), new java.sql.Date(data_fim.getTime()), tipo_quarto,true);
+            created = true;
         }
-        return reserved;
+        return created;
     }
 }

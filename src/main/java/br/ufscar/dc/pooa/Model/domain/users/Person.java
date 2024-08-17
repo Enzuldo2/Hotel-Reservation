@@ -3,7 +3,7 @@ package br.ufscar.dc.pooa.Model.domain.users;
 
 import java.util.Date;
 
-interface Person {
+public interface Person {
 
 
 

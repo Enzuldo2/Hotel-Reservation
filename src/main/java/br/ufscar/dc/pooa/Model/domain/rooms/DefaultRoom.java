@@ -12,19 +12,20 @@ public class DefaultRoom  implements Room{
     private float length;
     private float height;
     private int capacity;
-    private float price;
     private String description;
     private Bridge_Room bridge_room;
 
-    public DefaultRoom(Bridge_Room room_type, int roomCapacity, float roomPrice, String roomDescription, float roomLength, float roomWidth, float roomHeight) {
+    public DefaultRoom(Bridge_Room room_type, int roomCapacity,  String roomDescription, float roomLength, float roomWidth, float roomHeight) {
         this.reservation = Not_Reserved.getInstance();
         this.capacity = roomCapacity;
-        this.price = roomPrice;
         this.description = roomDescription;
         this.width = roomWidth;
         this.length = roomLength;
         this.height = roomHeight;
         this.bridge_room = room_type;
+    }
+
+    public DefaultRoom() {
     }
 
 
@@ -45,11 +46,6 @@ public class DefaultRoom  implements Room{
 
 
     @Override
-    public float getPrice() {
-        return price;
-    }
-
-    @Override
     public float area() {
         return width * length;
     }
@@ -57,6 +53,16 @@ public class DefaultRoom  implements Room{
     @Override
     public float volume() {
         return width * length * height;
+    }
+
+    @Override
+    public Bridge_Room getBridgeroom() {
+        return bridge_room;
+    }
+
+    @Override
+    public ReservationState getReservation_State() {
+        return reservation;
     }
 
     // Getters e Setters
@@ -113,9 +119,6 @@ public class DefaultRoom  implements Room{
         this.capacity = capacity;
     }
 
-    public void setPrice(float price) {
-        this.price = price;
-    }
 
     public String getDescription() {
         return description;
@@ -129,7 +132,12 @@ public class DefaultRoom  implements Room{
         return bridge_room.getRoomType();
     }
 
+
     public int getId() {
         return roomId;
+    }
+
+    public void setBridge_room(Bridge_Room bridge_room) {
+        this.bridge_room = bridge_room;
     }
 }

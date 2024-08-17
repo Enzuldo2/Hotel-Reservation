@@ -3,6 +3,12 @@ package br.ufscar.dc.pooa.Model.domain.rooms;
 import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
 
 public class SingleRoom implements Bridge_Room {
+    private Float roomPrice = 70f;
+
+    public SingleRoom() {
+    }
+
+
     @Override
     public Bridge_Room get_Tipo_Room() {
         return this;
@@ -22,5 +28,10 @@ public class SingleRoom implements Bridge_Room {
     public String getRoomType() {
         return "Single";
     }
-    
+
+    @Override
+    public Float getRoomPrice() {
+        return roomPrice;
+    }
+
 }
