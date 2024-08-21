@@ -27,7 +27,7 @@ public class FamilyRoom implements Bridge_Room {
 
     @Override
     public String getRoomType() {
-        return "Family";
+        return "Familia";
     }
 
     @Override

@@ -1,7 +1,5 @@
 package br.ufscar.dc.pooa.dao;
 
-import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.hotel.Hotel;
 import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.FamilyRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.SingleRoom;
@@ -32,6 +30,8 @@ public class QuartoDAO {
             quarto.setHeight(rs.getFloat("altura"));
             quarto.setLength(rs.getFloat("comprimento"));
             quarto.setWidth(rs.getFloat("largura"));
+            boolean reserved = rs.getInt("reservado") == 1;
+            quarto.setReserved(reserved);
 
             quartos.add(quarto);
         }
@@ -49,9 +49,9 @@ public class QuartoDAO {
         }
     }
 
-    public static void createRoom(String tipo, String descricao, int capacidade, float altura, float comprimento, float largura) throws SQLException, ClassNotFoundException {
+    public static void createRoom(String tipo, String descricao, int capacidade, float altura, float comprimento, float largura,boolean reservado) throws SQLException, ClassNotFoundException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "INSERT INTO quarto (tipo, descricao, capacidade, altura, comprimento, largura) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO quarto (tipo, descricao, capacidade, altura, comprimento, largura, reservado) VALUES (?, ?, ?, ?, ?, ? , ?)";
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setString(1, tipo);
         pst.setString(2, descricao);
@@ -59,13 +59,15 @@ public class QuartoDAO {
         pst.setFloat(4, altura);
         pst.setFloat(5, comprimento);
         pst.setFloat(6, largura);
+        var intReservado = reservado ? 1 : 0;
+        pst.setInt(7, intReservado);
         pst.executeUpdate();
         connection.close();
     }
 
-    public static void update(int id, String tipo, String descricao, int capacidade, float altura, float comprimento, float largura) throws SQLException, ClassNotFoundException {
+    public static void update(int id, String tipo, String descricao, int capacidade, float altura, float comprimento, float largura , boolean reservado) throws SQLException, ClassNotFoundException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "UPDATE quarto SET tipo = ?, descricao = ?, capacidade = ?, altura = ?, comprimento = ?, largura = ? WHERE id = ?";
+        String query = "UPDATE quarto SET tipo = ?, descricao = ?, capacidade = ?, altura = ?, comprimento = ?, largura = ? , reservado = ? WHERE id = ?";
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setString(1, tipo);
         pst.setString(2, descricao);
@@ -73,7 +75,10 @@ public class QuartoDAO {
         pst.setFloat(4, altura);
         pst.setFloat(5, comprimento);
         pst.setFloat(6, largura);
-        pst.setInt(7, id);
+        var intReservado = reservado ? 1 : 0;
+        pst.setInt(7, intReservado);
+        pst.setInt(8, id);
+
         pst.executeUpdate();
         connection.close();
     }
@@ -103,6 +108,8 @@ public class QuartoDAO {
             quarto.setHeight(rs.getFloat("altura"));
             quarto.setLength(rs.getFloat("comprimento"));
             quarto.setWidth(rs.getFloat("largura"));
+            boolean reserved = rs.getInt("reservado") == 1;
+            quarto.setReserved(reserved);
         }
         connection.close();
         return quarto;

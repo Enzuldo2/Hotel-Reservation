@@ -19,7 +19,4 @@ public interface Person {
 
     void setBirthday(Date birthday);
 
-    public String getPhone();
-
-    public void setPhone(String phone);
 }

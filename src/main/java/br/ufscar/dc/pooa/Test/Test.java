@@ -1,7 +1,6 @@
 package br.ufscar.dc.pooa.Test;
 
 
-import br.ufscar.dc.pooa.Model.domain.users.Admin;
 import br.ufscar.dc.pooa.View.VagasView;
 
 

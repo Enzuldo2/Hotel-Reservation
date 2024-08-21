@@ -1,6 +1,5 @@
 package br.ufscar.dc.pooa.Model.domain.Reserva;
 
-import br.ufscar.dc.pooa.Model.domain.reservation.Not_Reserved;
 import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.Model.interfaces.Room;
 
@@ -12,13 +11,19 @@ public class Estadia {
     private Room quarto;
     private Date dataEntrada;
     private Date dataSaida;
+    private int pessoas;
 
-    public Estadia(int id, Person cliente, Room quarto, Date dataEntrada, Date dataSaida) {
+    public Estadia(int id, Person cliente, Room quarto, Date dataEntrada, Date dataSaida,int pessoas) {
         this.id = id;
         this.cliente = cliente;
         this.quarto = quarto;
         this.dataEntrada = dataEntrada;
-        setDataSaida(dataSaida);
+        this.dataSaida = dataSaida;
+        this.pessoas = pessoas;
+    }
+
+    public Estadia() {
+
     }
 
     // getters e setters
@@ -33,6 +38,14 @@ public class Estadia {
 
     public Person getCliente() {
         return cliente;
+    }
+
+    public int getPessoas() {
+        return pessoas;
+    }
+
+    public void setPessoas(int pessoas) {
+        this.pessoas = pessoas;
     }
 
     public void setCliente(Person cliente) {
@@ -72,9 +85,6 @@ public class Estadia {
     }
 
     public boolean isReservado() {
-        if(quarto.getReservation_State() instanceof Not_Reserved) {
-            return false;
-        }
-        return true;
+        return quarto.getReservation();
     }
 }

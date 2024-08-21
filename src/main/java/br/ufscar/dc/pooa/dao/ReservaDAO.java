@@ -1,7 +1,6 @@
 package br.ufscar.dc.pooa.dao;
 
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.hotel.Hotel;
 import br.ufscar.dc.pooa.Model.domain.rooms.FamilyRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.SingleRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.SuiteRoom;

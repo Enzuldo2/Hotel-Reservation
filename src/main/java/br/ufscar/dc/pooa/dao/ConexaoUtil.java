@@ -24,6 +24,7 @@ public class ConexaoUtil {
         }
     }
 
+
     // Singleton
     public static synchronized ConexaoUtil getInstance() {
         if (conexaoUtil == null) {

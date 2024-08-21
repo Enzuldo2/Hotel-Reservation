@@ -1,13 +1,14 @@
 package br.ufscar.dc.pooa.Model.domain.rooms;
 
-import br.ufscar.dc.pooa.Model.domain.reservation.Not_Reserved;
 import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
-import br.ufscar.dc.pooa.Model.interfaces.ReservationState;
 import br.ufscar.dc.pooa.Model.interfaces.Room;
+import br.ufscar.dc.pooa.dao.QuartoDAO;
+
+import java.sql.SQLException;
 
 public class DefaultRoom  implements Room{
     private int roomId;
-    private ReservationState reservation;
+    private boolean reservation;
     private float width;
     private float length;
     private float height;
@@ -16,7 +17,7 @@ public class DefaultRoom  implements Room{
     private Bridge_Room bridge_room;
 
     public DefaultRoom(Bridge_Room room_type, int roomCapacity,  String roomDescription, float roomLength, float roomWidth, float roomHeight) {
-        this.reservation = Not_Reserved.getInstance();
+        this.reservation = false;
         this.capacity = roomCapacity;
         this.description = roomDescription;
         this.width = roomWidth;
@@ -34,6 +35,10 @@ public class DefaultRoom  implements Room{
        return this;
     }
 
+    @Override
+    public int getRoomId() {
+        return roomId;
+    }
 
 
 
@@ -61,15 +66,12 @@ public class DefaultRoom  implements Room{
     }
 
     @Override
-    public ReservationState getReservation_State() {
+    public Boolean getReservation() {
         return reservation;
     }
 
     // Getters e Setters
 
-    public int getRoomId() {
-        return roomId;
-    }
 
     public void setRoomId(int roomId) {
         this.roomId = roomId;
@@ -77,14 +79,12 @@ public class DefaultRoom  implements Room{
 
 
     public boolean isReserved() {
-        if(reservation instanceof Not_Reserved) {
-            return false;
-        }
-        return true;
+        return reservation;
     }   
 
-    public void setReserved(ReservationState isReserved) {
-        this.reservation = isReserved;
+    public void setReserved(boolean reserved) throws SQLException, ClassNotFoundException {
+        this.reservation = reserved;
+
     }
 
     public float getWidth() {
@@ -99,13 +99,14 @@ public class DefaultRoom  implements Room{
         return length;
     }
 
-    public void setLength(float length) {
+    public void setLength(float length) throws SQLException, ClassNotFoundException {
         this.length = length;
     }
 
     public float getHeight() {
         return height;
     }
+
 
     public void setHeight(float height) {
         this.height = height;
