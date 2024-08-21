@@ -28,7 +28,7 @@ import java.util.Base64;
 
 // This class is responsible for sending emails to clients when a reservation is available
 // It uses the Gmail API to send the emails(Google Cloud Platform)
-// email: pooaenzo@gmail.com senha: VouPassarEmPOOA
+// email: pooaenzo@gmail.com
 
 public class GmailService implements Observer  {
 
@@ -37,7 +37,7 @@ public class GmailService implements Observer  {
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
     private static final java.util.List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_SEND);
-    private static final String CREDENTIALS_FILE_PATH = "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\credenciais.json";
+    private static final String CREDENTIALS_FILE_PATH = "C:\\Users\\enzod\\Desktop\\credenciais.json";
 
     private static Credential getCredentials() throws Exception {
         File credentialsFile = new File(CREDENTIALS_FILE_PATH);
