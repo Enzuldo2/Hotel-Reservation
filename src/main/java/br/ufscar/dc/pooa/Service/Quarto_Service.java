@@ -31,23 +31,28 @@ public class Quarto_Service {
 
     public boolean createRoom(String roomType, int roomCapacity, String roomDescription, float roomLength, float roomWidth, float roomHeight) throws SQLException, ClassNotFoundException {
         boolean created = false;
-        if(roomType.equals("Single")) {
-            Bridge_Room bridge_room = new SingleRoom();
-            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity,  roomDescription, roomLength, roomWidth, roomHeight);
-            addRoom(room);
-            created = true;
-        }
-        else if(roomType.equals("Suite")) {
-            Bridge_Room bridge_room = new SuiteRoom();
-            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
-            addRoom(room);
-            created = true;
-        }
-        else if(roomType.equals("Familia")) {
-            Bridge_Room bridge_room = new FamilyRoom( );
-            DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
-            addRoom(room);
-            created = true;
+        switch (roomType) {
+            case "Single": {
+                Bridge_Room bridge_room = new SingleRoom();
+                DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
+                addRoom(room);
+                created = true;
+                break;
+            }
+            case "Suite": {
+                Bridge_Room bridge_room = new SuiteRoom();
+                DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
+                addRoom(room);
+                created = true;
+                break;
+            }
+            case "Familia": {
+                Bridge_Room bridge_room = new FamilyRoom();
+                DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
+                addRoom(room);
+                created = true;
+                break;
+            }
         }
         return created;
     }

@@ -51,7 +51,7 @@ public class Waiting_List_Service {
         waitingList = ListaEsperaDAO.readLista();
         List<String> emails = null;
         for (Integer key : waitingList.keySet()) {
-            emails.addAll(waitingList.get(key));
+            emails = waitingList.get(key);
         }
         return emails;
     }

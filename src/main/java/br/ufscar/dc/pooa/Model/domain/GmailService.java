@@ -90,7 +90,9 @@ public class GmailService implements Observer  {
     public void update(List<String> emails, Integer id) throws SQLException, ClassNotFoundException {
         for (String email : emails){
             try {
-                sendEmail(email, "Reserva disponível", "A reserva que você estava esperando está disponível!");
+                sendEmail(email, "(NÃO RESPONDA) Reserva disponível", "A reserva que você estava esperando está disponível!\n" +
+                        "Para mais informações, entre em contato com a recepção do hotel.\n\n"+
+                        "Não responda a este email, ele é gerado automaticamente.");
             } catch (Exception e) {
                 e.printStackTrace();
             }
