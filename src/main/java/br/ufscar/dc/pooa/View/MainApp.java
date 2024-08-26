@@ -1,18 +1,14 @@
 package br.ufscar.dc.pooa.View;
 
-import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.users.Client;
 import br.ufscar.dc.pooa.Service.Client_Service;
-import br.ufscar.dc.pooa.Service.Quarto_Service;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
 
 public class MainApp {
     private JFrame frame;
@@ -23,7 +19,7 @@ public class MainApp {
     }
 
     private void initializeUI() {
-        frame = createFrame("Vagas", 500, 400);
+        frame = createFrame("Bem vindo ao APP do nosso Hotel", 500, 400);
         panel1 = createPanel(new BorderLayout(), new Dimension(400, 300));
         frame.setContentPane(panel1);
         createMenuBarBasic();
@@ -47,11 +43,26 @@ public class MainApp {
 
     private void createMenuBarBasic() {
         panel1.removeAll();
-        JTextArea jobListingsTextArea = createTextArea("Esta Procurando por uma Vaga para descansar?");
-        panel1.add(new JScrollPane(jobListingsTextArea), BorderLayout.CENTER);
+        JLabel welcomeLabel = createWelcomeLabel("C:\\Users\\enzod\\Desktop\\nova_foto.jpeg", "Bem-vindo ao Nosso Hotel!");
+        panel1.add(welcomeLabel, BorderLayout.CENTER);
         frame.setJMenuBar(createMenuBarBasicItems());
         createMenuBarBasicItems();
         refreshPanel();
+    }
+
+    protected JLabel createWelcomeLabel(String imagePath, String welcomeMessage) {
+        ImageIcon imageIcon = new ImageIcon(imagePath);
+        JLabel label = new JLabel(welcomeMessage,imageIcon, JLabel.CENTER);
+
+        label.setHorizontalTextPosition(JLabel.CENTER);
+        label.setVerticalTextPosition(JLabel.CENTER);
+
+        label.setFont(new Font("Serif", Font.BOLD, 36));
+        label.setForeground(Color.WHITE);
+        label.setOpaque(true);
+        label.setBackground(new Color(0, 0, 0, 100));
+
+        return label;
     }
 
     private JMenuBar createMenuBarBasicItems() {
@@ -61,12 +72,18 @@ public class MainApp {
         JMenuItem loginItem = createMenuItem("Login", e -> showLoginDialog());
         JMenuItem createAccountItem = createMenuItem("Create Account", e -> {
             try {
-                showCreateAccountDialog();
+                AdminView.showCreateAccountDialog();
             } catch (SQLException | ClassNotFoundException | ParseException ex) {
                 showErrorDialog(ex);
             }
         });
-        JMenuItem viewJobsItem = createMenuItem("Quartos Disponíveis Hoje", e -> viewQuartos());
+        JMenuItem viewJobsItem = createMenuItem("Informações Sobre Disponibilidade de Quartos", e -> {
+            try {
+                viewQuartos();
+            } catch (SQLException | ClassNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
 
         optionsMenu.add(loginItem);
         optionsMenu.add(createAccountItem);
@@ -76,81 +93,19 @@ public class MainApp {
         return menuBar;
     }
 
-    private void viewQuartos() {
+    private void viewQuartos() throws SQLException, ClassNotFoundException {
         panel1.removeAll();
-        JTextArea vagasTextArea = createTextArea("Quartos Disponíveis para Hoje:\n" +
-                "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n");
+        JTextArea vagasTextArea = createTextArea("Caso Tenha Quartos disponiveis Para Reserva Hoje:\n" +
+                "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n"+
+                "Caso queira reservar um quarto, por favor, faça o login ou vá a recepção do Hotel.\n\n");
         panel1.add(new JScrollPane(vagasTextArea), BorderLayout.CENTER);
 
-        try {
-            List<DefaultRoom> rooms = Quarto_Service.getInstance().getRooms();
-            rooms.stream().filter(room -> !room.isReserved()).forEach(room -> appendRoomInfo(vagasTextArea, room));
-        } catch (SQLException | ClassNotFoundException ex) {
-            showErrorDialog(ex);
-        }
+        UserView.viewQuartoSemLogin();
 
         refreshPanel();
     }
 
-    private void appendRoomInfo(JTextArea textArea, DefaultRoom room) {
-        textArea.append("ID: " + room.getId() + "\n");
-        textArea.append("Tipo: " + room.getBridgeroom().getRoomType() + "\n");
-        textArea.append("Descrição: " + room.getDescription() + "\n");
-        textArea.append("Comprimento: " + room.getLength() + "\n");
-        textArea.append("Largura: " + room.getWidth() + "\n");
-        textArea.append("Altura: " + room.getHeight() + "\n\n");
-    }
 
-
-    private void showCreateAccountDialog() throws SQLException, ClassNotFoundException, ParseException {
-        JTextField usernameField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
-        JPasswordField confirmPasswordField = new JPasswordField();
-        JTextField emailField = new JTextField();
-        JTextField birthdayField = new JTextField();
-
-        Object[] message = {
-                "Username:", usernameField,
-                "Password:", passwordField,
-                "Confirm Password", confirmPasswordField,
-                "Email:", emailField,
-                "Birthday(dd/MM/yyyy):", birthdayField
-        };
-
-        if (showConfirmDialog("Create Account", message)) {
-            processAccountCreation(usernameField, passwordField, confirmPasswordField, emailField, birthdayField);
-        }
-    }
-
-    private void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField) {
-        try {
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
-            String confirmPassword = new String(confirmPasswordField.getPassword());
-            String email = emailField.getText();
-
-            if (!Client_Service.getInstance().isValidEmail(email)) {
-                showMessageDialog("Email inválido!");
-                return;
-            }
-
-            if (!password.equals(confirmPassword)) {
-                showMessageDialog("Passwords do not match!");
-                return;
-            }
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            Date birthday = dateFormat.parse(birthdayField.getText());
-
-            if (Client_Service.getInstance().createUser(username, password, email, birthday)) {
-                showMessageDialog("Account created successfully!");
-            } else {
-                showMessageDialog("Failed to create account! Username already exists");
-            }
-        } catch (SQLException | ClassNotFoundException | ParseException ex) {
-            showErrorDialog(ex);
-        }
-    }
 
     private JMenuItem createMenuItem(String text, ActionListener listener) {
         JMenuItem menuItem = new JMenuItem(text);

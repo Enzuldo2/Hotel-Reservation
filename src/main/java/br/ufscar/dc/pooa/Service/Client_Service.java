@@ -59,41 +59,25 @@ public class Client_Service {
         return true;
     }
 
-    public Person getUser(int userId) throws SQLException, ClassNotFoundException {
-        for (Client client : clients) {
-            if (client.getId() == userId) {
-                return client;
-            }
-        }
-        return null;
-    }
 
-    public boolean updateUser(Person user) throws SQLException, ClassNotFoundException {
+
+    public boolean updateUser(Client user) throws SQLException, ClassNotFoundException {
         for (Client client : clients) {
             if (client.getId() == user.getPersonId()) {
-                clients.remove(client);
-                clients.add((Client) user);
-                return true;
+                ClientDAO.update(user.getPersonId(), user.getName(), user.getPassword(), user.getEmail(), user.getBirthday());
+
             }
         }
         return false;
     }
 
-    public boolean deleteUser(int userId) throws SQLException, ClassNotFoundException {
-        for (Client client : clients) {
-            if (client.getId() == userId) {
-                clients.remove(client);
-                return true;
-            }
-        }
-        return false;
+
+    public List<Client> getUsers() throws SQLException, ClassNotFoundException {
+        return clients = ClientDAO.readClientslist();
     }
 
-    public List<Client> getUsers()  {
-        return clients;
-    }
-
-    public Client getClient(int idCliente) {
+    public Client getClient(int idCliente) throws SQLException, ClassNotFoundException {
+        clients = getUsers();
         for (Client client : clients) {
             if (client.getId() == idCliente) {
                 return client;
@@ -102,12 +86,28 @@ public class Client_Service {
         return null;
     }
 
-    public Client haveClient(String username,String password) {
+    public Client haveClient(String username,String password) throws SQLException, ClassNotFoundException {
+        clients = getUsers();
         for (Client client : clients) {
             if (client.getName().equals(username) && client.getPassword().equals(password)) {
                 return client;
             }
         }
         return null;
+    }
+
+    public void deleteUser(int id) throws SQLException, ClassNotFoundException {
+        clients = getUsers();
+        for (Client client : clients) {
+            if (client.getId() == id) {
+                clients.remove(client);
+                try {
+                    ClientDAO.delete(id);
+                } catch (SQLException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+                break;
+            }
+        }
     }
 }

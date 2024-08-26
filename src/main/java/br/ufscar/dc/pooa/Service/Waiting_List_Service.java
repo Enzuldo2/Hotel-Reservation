@@ -47,12 +47,8 @@ public class Waiting_List_Service {
         ListaEsperaDAO.deleteLista(reservaId);
     }
 
-    public List<String> getListaEspera() throws SQLException, ClassNotFoundException {
+    public HashMap<Integer, List<String>> getListaEspera() throws SQLException, ClassNotFoundException {
         waitingList = ListaEsperaDAO.readLista();
-        List<String> emails = null;
-        for (Integer key : waitingList.keySet()) {
-            emails = waitingList.get(key);
-        }
-        return emails;
+        return waitingList;
     }
 }

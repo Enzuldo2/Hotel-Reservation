@@ -50,9 +50,6 @@ public class Client implements Person {
     }
 
 
-    public void setActive(int active) {
-        boolean isActive = active == 1;
-    }
 
     public String getEmail() {
         return email;

@@ -1,16 +1,21 @@
 package br.ufscar.dc.pooa.View;
 
+import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
+import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.users.Client;
-import br.ufscar.dc.pooa.Service.Client_Service;
+import br.ufscar.dc.pooa.Service.Quarto_Service;
+import br.ufscar.dc.pooa.Service.Reserva_Service;
 import br.ufscar.dc.pooa.Service.Waiting_List_Service;
 
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 public abstract class UserView {
-    protected JFrame frame;
+    protected static JFrame frame;
     protected JPanel panel1;
 
     public UserView(String title) {
@@ -51,6 +56,63 @@ public abstract class UserView {
         return label;
     }
 
+    public static void viewQuartoSemLogin() throws SQLException, ClassNotFoundException {
+        Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
+        Date dataFim = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
+        JTextArea textArea = new JTextArea();
+        List<DefaultRoom> rooms = Quarto_Service.getInstance().getRooms();
+        int tipos = 0;
+        if(Reserva_Service.getInstance().verifica_Reserva(dataAtual, dataAtual, dataFim, "Single")) {
+            for (DefaultRoom room : rooms) {
+                if (room.getBridgeroom().getRoomType().equals("Single") && !room.isReserved()) {
+                    textArea.append("Temos Quarto Single disponivel para hoje!\n");
+                    tipos++;
+                }
+            }
+
+        }
+        if(Reserva_Service.getInstance().verifica_Reserva(dataAtual, dataAtual, dataFim, "Familia")) {
+            for (DefaultRoom room : rooms) {
+                if (room.getBridgeroom().getRoomType().equals("Familia") && !room.isReserved()) {
+                    textArea.append("Temos Quarto Familia disponivel para hoje!\n");
+                    tipos++;
+                }
+            }
+        }
+        if(Reserva_Service.getInstance().verifica_Reserva(dataAtual, dataAtual, dataFim, "Suite")) {
+            for (DefaultRoom room : rooms) {
+                if (room.getBridgeroom().getRoomType().equals("Suite") && !room.isReserved()) {
+                    textArea.append("Temos Quarto Suite disponivel para hoje!\n");
+                    tipos++;
+                }
+            }
+        }
+        if(tipos == 0){
+            textArea.append("Não temos quartos disponiveis para hoje!\n");
+        }
+
+        textArea.setEditable(false);
+        JOptionPane.showMessageDialog(null, new JScrollPane(textArea), "Quartos Disponíveis", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    void appendRoomInfo(JTextArea textArea, DefaultRoom room) {
+        textArea.append("ID: " + room.getId() + "\n");
+        textArea.append("Tipo: " + room.getBridgeroom().getRoomType() + "\n");
+        textArea.append("Descrição: " + room.getDescription() + "\n");
+        textArea.append("Comprimento: " + room.getLength() + "\n");
+        textArea.append("Largura: " + room.getWidth() + "\n");
+        textArea.append("Altura: " + room.getHeight() + "\n\n");
+    }
+
+    void appendReservaInfo(JTextArea textArea, Reserva reserva) {
+        textArea.append("ID: " + reserva.getId() + "\n");
+        textArea.append("ID Cliente: " + reserva.getCliente().getPersonId() + "\n");
+        textArea.append("Data de Entrada: " + reserva.getDataEntrada() + "\n");
+        textArea.append("Data de Saida: " + reserva.getDataSaida() + "\n");
+        textArea.append("Categoria: " + reserva.getCategoria().getRoomType() + "\n");
+        textArea.append("Reservado: " + reserva.getReserved() + "\n\n");
+    }
+
     protected void refreshPanel() {
         panel1.revalidate();
         panel1.repaint();
@@ -74,7 +136,7 @@ public abstract class UserView {
 
 
 
-    void showErrorDialog(Exception ex) {
+    static void showErrorDialog(Exception ex) {
         JOptionPane.showMessageDialog(frame, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
     }
 

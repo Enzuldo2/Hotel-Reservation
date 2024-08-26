@@ -8,6 +8,8 @@ import br.ufscar.dc.pooa.dao.EstadioDAO;
 import br.ufscar.dc.pooa.dao.QuartoDAO;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -59,7 +61,9 @@ public class Estadia_Service {
                     if(quarto != null) {
                         rerserva_temp = r;
                         Reserva_Service.getInstance().removeReserva(r); //remove a reserva e exclue a lista de espera
-                        var bool = Reserva_Service.getInstance().verifica_Reserva(rerserva_temp.getDataEntrada(), rerserva_temp.getDataSaida(), rerserva_temp.getCategoria().getRoomType());
+                        LocalDate hoje = LocalDate.now();
+                        Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
+                        var bool = Reserva_Service.getInstance().verifica_Reserva(dataAtual, rerserva_temp.getDataEntrada(), rerserva_temp.getDataSaida(), rerserva_temp.getCategoria().getRoomType());
                         if(bool){
                             //verifica se é possivel aumentar a data da reserva
                             createEstadia(client, quarto, rerserva_temp.getDataEntrada(), Data_Saida, pessoas);
@@ -84,7 +88,8 @@ public class Estadia_Service {
         boolean created = false;
         var client = Client_Service.getInstance().getClient(clientId);
         DefaultRoom quarto = Quarto_Service.getInstance().getRoom(tipo_quarto);
-        var tem_espaco = Reserva_Service.getInstance().verifica_Reserva(dataEntrada, dataSaida, tipo_quarto);
+        Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
+        var tem_espaco = Reserva_Service.getInstance().verifica_Reserva(dataAtual, dataEntrada, dataSaida, tipo_quarto);
         if(quarto != null && tem_espaco){ //verifica mesmo assim as reservas, pois cliente pode errar.
             createEstadia(client, quarto, dataEntrada, dataSaida, pessoas);
             created = true;
@@ -109,7 +114,8 @@ public class Estadia_Service {
         return estadias;
     }
 
-    public void DeleteEstadia(int id) {
+    public boolean DeleteEstadia(int id) {
+        boolean deleted = false;
         try {
             for(Estadia e : estadias){
                 if(e.getId() == id){
@@ -117,13 +123,14 @@ public class Estadia_Service {
                     var quarto = quarto_service.getRoom(e.getQuarto().getRoomId());
                     quarto.setReserved(false);
                     quarto_service.updateRoom(quarto);
+                    EstadioDAO.deleteEstadia(id);
+                    deleted = true;
                     break;
                 }
             }
-            EstadioDAO.deleteEstadia(id);
-            estadias = EstadioDAO.readEstadias();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+        return deleted;
     }
 }

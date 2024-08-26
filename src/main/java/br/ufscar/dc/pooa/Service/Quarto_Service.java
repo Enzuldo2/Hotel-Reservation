@@ -60,7 +60,7 @@ public class Quarto_Service {
     public int quantidade_quartos_para_tipo(String tipo_quarto){
         int quantidade_quartos = 0;
         for (DefaultRoom room : rooms) {
-            if (room.getBridgeroom().getRoomType().equals(tipo_quarto)) {
+            if (room.getBridgeroom().getRoomType().equals(tipo_quarto)){
                 quantidade_quartos++;
             }
         }

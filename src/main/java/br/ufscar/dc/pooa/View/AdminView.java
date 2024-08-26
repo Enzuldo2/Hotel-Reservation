@@ -13,16 +13,15 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+
 
 public class AdminView extends UserView {
 
     public AdminView() {
         super("Admin - Bem-vindo");
-        Client user = null;
-        createMenuBar(user);
+        createMenuBar(null);
     }
 
     @Override
@@ -75,7 +74,7 @@ public class AdminView extends UserView {
 
     }
 
-    private void showCreateAccountDialog() throws SQLException, ClassNotFoundException, ParseException {
+    public static void showCreateAccountDialog() throws SQLException, ClassNotFoundException, ParseException {
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
         JPasswordField confirmPasswordField = new JPasswordField();
@@ -95,7 +94,7 @@ public class AdminView extends UserView {
         }
     }
 
-    private void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField) {
+    private static void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField) {
         try {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
@@ -124,6 +123,8 @@ public class AdminView extends UserView {
             showErrorDialog(ex);
         }
     }
+
+
 
     private void reservaQuartoAdmin() {
         panel1.removeAll();
@@ -161,23 +162,28 @@ public class AdminView extends UserView {
 
     private void processReservaAdmin(JTextField clientIdField, JTextField dataFieldInicial, JTextField dataFieldEnd, JTextField categoriaField) {
         try {
+            Reserva_Service reserva_Service = Reserva_Service.getInstance();
             int clientId = Integer.parseInt(clientIdField.getText());
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            Date dataInicialDate = dateFormat.parse(dataFieldInicial.getText());
-            Date dataEndDate = dateFormat.parse(dataFieldEnd.getText());
+            Date dataInicialDate = reserva_Service.parseDate(dataFieldInicial.getText());
+            Date dataEndDate = reserva_Service.parseDate(dataFieldEnd.getText());
+            Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
             String tipoQuarto = categoriaField.getText();
-            LocalDate hoje = LocalDate.now();
-            String dataAtual = hoje.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
 
-            if (Reserva_Service.getInstance().makeReservation(Client_Service.getInstance().getClient(clientId), dataAtual, dataInicialDate, dataEndDate, tipoQuarto)) {
+            if (reserva_Service.makeReservation(Client_Service.getInstance().getClient(clientId), dataAtual, dataInicialDate, dataEndDate, tipoQuarto)) {
                 showMessageDialog("Reserva feita com sucesso!");
             } else {
+                if(dataAtual.equals(dataInicialDate)){
+                    throw new IllegalArgumentException("Hoje não temos quartos desse tipo disponiveis");
+                }
                 showMessageDialog("Falha na reserva do quarto\n" + "Não temos quartos disponiveis do tipo " + categoriaField.getText() + " para o periodo informado");
                 observerService(Client_Service.getInstance().getClient(clientId), Reserva_Service.getInstance().get_Ids(dataInicialDate, dataEndDate, categoriaField.getText()));
             }
-        } catch (ParseException | SQLException | ClassNotFoundException ex) {
+        } catch (ParseException | SQLException | ClassNotFoundException ex ) {
             showErrorDialog(ex);
+        }
+        catch (IllegalArgumentException ex) {
+            showMessageDialog("Erro na reserva, dados invalidos. " + ex.getMessage());
         }
     }
 
@@ -362,23 +368,32 @@ public class AdminView extends UserView {
     private void viewQuartosAdmin() throws SQLException, ClassNotFoundException {
         panel1.removeAll();
         JTextArea vagasTextArea = createTextArea("Quartos Disponíveis para Hoje:\n" +
-                "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n");
+                "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n" +
+                "Quartos Familia tem capacidade de 4 a 6 pessoas, Single de 1 a 2 pessoas e Suite de 2 a 4 pessoas.\n");
         panel1.add(new JScrollPane(vagasTextArea), BorderLayout.CENTER);
 
         List<DefaultRoom> rooms = Quarto_Service.getInstance().getRooms();
-        rooms.forEach(room -> appendRoomInfo(vagasTextArea, room));
+        for (DefaultRoom room : rooms) {
+            super.appendRoomInfo(vagasTextArea, room);
+        }
+
+        JButton deleteRoomButton = createButton("Deletar Quarto", e -> deleteRoom());
+        panel1.add(deleteRoomButton, BorderLayout.SOUTH);
+
 
         refreshPanel();
     }
 
-    private void appendRoomInfo(JTextArea textArea, DefaultRoom room) {
-        textArea.append("ID: " + room.getId() + "\n");
-        textArea.append("Tipo: " + room.getBridgeroom().getRoomType() + "\n");
-        textArea.append("Descrição: " + room.getDescription() + "\n");
-        textArea.append("Comprimento: " + room.getLength() + "\n");
-        textArea.append("Largura: " + room.getWidth() + "\n");
-        textArea.append("Altura: " + room.getHeight() + "\n\n");
+    private void deleteRoom() {
+        int id = Integer.parseInt(showInputDialog("Digite o ID do quarto a ser deletado:"));
+        try {
+            Quarto_Service.getInstance().removeRoom(id);
+            showMessageDialog("Quarto deletado com sucesso!");
+        } catch (SQLException | ClassNotFoundException ex) {
+            showErrorDialog(ex);
+        }
     }
+
 
     private void mostrarClientes() throws SQLException, ClassNotFoundException {
         panel1.removeAll();
@@ -388,7 +403,20 @@ public class AdminView extends UserView {
         List<Client> clients = Client_Service.getInstance().getUsers();
         clients.forEach(client -> appendClientInfo(clientesTextArea, client));
 
+        JButton deleteClientButton = createButton("Deletar Cliente", e -> deleteClient());
+        panel1.add(deleteClientButton, BorderLayout.SOUTH);
+
         refreshPanel();
+    }
+
+    private void deleteClient() {
+        int id = Integer.parseInt(showInputDialog("Digite o ID do cliente a ser deletado:"));
+        try {
+            Client_Service.getInstance().deleteUser(id);
+            showMessageDialog("Cliente deletado com sucesso!");
+        } catch (SQLException | ClassNotFoundException ex) {
+            showErrorDialog(ex);
+        }
     }
 
     private void appendClientInfo(JTextArea textArea, Client client) {
@@ -404,17 +432,32 @@ public class AdminView extends UserView {
         panel1.add(new JScrollPane(listaEsperaTextArea), BorderLayout.CENTER);
 
         try {
-            List<String> waitList = Waiting_List_Service.getInstance().getListaEspera();
-            if (waitList.isEmpty()) {
+            var waitList = Waiting_List_Service.getInstance().getListaEspera();
+            if (waitList == null) {
                 listaEsperaTextArea.append("Nenhum cliente na lista de espera.\n");
             } else {
-                waitList.forEach(email -> listaEsperaTextArea.append("Email: " + email + "\n"));
+                for(var entry : waitList.entrySet()) {
+                    listaEsperaTextArea.append("ID da Reserva: " + entry.getKey() + "\n");
+                    listaEsperaTextArea.append("Email do Cliente: " + entry.getValue() + "\n\n");
+                }
             }
         } catch (SQLException | ClassNotFoundException ex) {
             showErrorDialog(ex);
         }
 
+        JButton deleteWaitListButton = createButton("Deletar Lista de Espera", e -> deleteWaitList());
+        panel1.add(deleteWaitListButton, BorderLayout.SOUTH);
+
         refreshPanel();
+    }
+
+    private void deleteWaitList() {
+        try {
+            Waiting_List_Service.getInstance().delete(Integer.parseInt(showInputDialog("Digite o ID da reserva a ser cancelada:")));
+            showMessageDialog("Lista de espera deletada com sucesso!");
+        } catch (SQLException | ClassNotFoundException ex) {
+            showErrorDialog(ex);
+        }
     }
 
     private void mostrarEstadias() {
@@ -429,7 +472,20 @@ public class AdminView extends UserView {
             showErrorDialog(ex);
         }
 
+        JButton cancelEstadiaButton = createButton("Check-OUT", e -> cancelEstadia());
+        panel1.add(cancelEstadiaButton, BorderLayout.SOUTH);
+
+
         refreshPanel();
+    }
+
+    private void cancelEstadia() {
+        int id = Integer.parseInt(showInputDialog("Digite o ID da estadia a ser cancelada:"));
+        if(Estadia_Service.getInstance().DeleteEstadia(id)){
+            showMessageDialog("Estadia cancelada com sucesso!");
+        }else{
+            showMessageDialog("Falha ao cancelar estadia");
+        }
     }
 
     private void appendEstadiaInfo(JTextArea textArea, Estadia estadia) {
@@ -441,18 +497,6 @@ public class AdminView extends UserView {
         textArea.append("Quantidade de Pessoas: " + estadia.getPessoas()+ "\n\n");
     }
 
-
-
-
-
-
-    private void appendReservaInfo(JTextArea textArea, Reserva reserva) {
-        textArea.append("ID: " + reserva.getId() + "\n");
-        textArea.append("Data de Entrada: " + reserva.getDataEntrada() + "\n");
-        textArea.append("Data de Saida: " + reserva.getDataSaida() + "\n");
-        textArea.append("Categoria: " + reserva.getCategoria().getRoomType() + "\n");
-        textArea.append("Reservado: " + reserva.getReserved() + "\n\n");
-    }
 
     private void cancelReserva() {
         try {
@@ -480,11 +524,11 @@ public class AdminView extends UserView {
         return textArea;
     }
 
-    private void showMessageDialog(String message) {
+    private static void showMessageDialog(String message) {
         JOptionPane.showMessageDialog(null, message);
     }
 
-    private boolean showConfirmDialog(String title, Object[] message) {
+    private static boolean showConfirmDialog(String title, Object[] message) {
         return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
     }
 

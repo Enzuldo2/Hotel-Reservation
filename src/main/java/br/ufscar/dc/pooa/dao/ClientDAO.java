@@ -50,7 +50,7 @@ public class ClientDAO {
 
     public static void update(int id, String name, String password, String email, Date birthday) throws SQLException, ClassNotFoundException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "UPDATE client SET name = ?, password = ?, email = ?, birthday = ?, isSuperUser = ?, isActive = ? WHERE id = ?";
+        String query = "UPDATE client SET name = ?, password = ?, email = ?, birthday = ? WHERE id = ?";
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setString(1, name);
         pst.setString(2, password);
