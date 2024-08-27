@@ -3,6 +3,7 @@ package br.ufscar.dc.pooa.View;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
 import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Service.Client_Service;
 import br.ufscar.dc.pooa.Service.Quarto_Service;
 import br.ufscar.dc.pooa.Service.Reserva_Service;
 import br.ufscar.dc.pooa.Service.Waiting_List_Service;
@@ -10,6 +11,8 @@ import br.ufscar.dc.pooa.Service.Waiting_List_Service;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +23,19 @@ public abstract class UserView {
 
     public UserView(String title) {
         initializeUI(title);
+    }
+
+    public static void login(String username, String password) {
+        try {
+            Client user = Client_Service.getInstance().haveClient(username, password);
+            if(user != null) {
+                new ClientView(user);
+            } else {
+                showMessageDialog("Login failed! Invalid username or password");
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            showErrorDialog(ex);
+        }
     }
 
     private void initializeUI(String title) {
@@ -42,6 +58,10 @@ public abstract class UserView {
     }
 
     protected JLabel createWelcomeLabel(String imagePath, String welcomeMessage) {
+        return getjLabel(imagePath, welcomeMessage);
+    }
+
+    static JLabel getjLabel(String imagePath, String welcomeMessage) {
         ImageIcon imageIcon = new ImageIcon(imagePath);
         JLabel label = new JLabel(welcomeMessage, imageIcon, JLabel.CENTER);
 
@@ -113,6 +133,60 @@ public abstract class UserView {
         textArea.append("Reservado: " + reserva.getReserved() + "\n\n");
     }
 
+    public static void showCreateAccountDialog() throws SQLException, ClassNotFoundException, ParseException {
+        JTextField usernameField = new JTextField();
+        JPasswordField passwordField = new JPasswordField();
+        JPasswordField confirmPasswordField = new JPasswordField();
+        JTextField emailField = new JTextField();
+        JTextField birthdayField = new JTextField();
+
+        Object[] message = {
+                "Username:", usernameField,
+                "Password:", passwordField,
+                "Confirm Password", confirmPasswordField,
+                "Email:", emailField,
+                "Birthday(dd/MM/yyyy):", birthdayField
+        };
+
+        if (showConfirmDialog("Create Account", message)) {
+            processAccountCreation(usernameField, passwordField, confirmPasswordField, emailField, birthdayField);
+        }
+    }
+
+    private static boolean showConfirmDialog(String title, Object[] message) {
+        return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
+    }
+
+    private static void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField) {
+        try {
+            String username = usernameField.getText();
+            String password = new String(passwordField.getPassword());
+            String confirmPassword = new String(confirmPasswordField.getPassword());
+            String email = emailField.getText();
+
+            if (!Client_Service.getInstance().isValidEmail(email)) {
+                showMessageDialog("Email inválido!");
+                return;
+            }
+
+            if (!password.equals(confirmPassword)) {
+                showMessageDialog("Passwords do not match!");
+                return;
+            }
+
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            Date birthday = dateFormat.parse(birthdayField.getText());
+
+            if (Client_Service.getInstance().createUser(username, password, email, birthday)) {
+                showMessageDialog("Account created successfully!");
+            } else {
+                showMessageDialog("Failed to create account! Username already exists");
+            }
+        } catch (SQLException | ClassNotFoundException | ParseException ex) {
+            showErrorDialog(ex);
+        }
+    }
+
     protected void refreshPanel() {
         panel1.revalidate();
         panel1.repaint();
@@ -136,6 +210,7 @@ public abstract class UserView {
 
 
 
+
     static void showErrorDialog(Exception ex) {
         JOptionPane.showMessageDialog(frame, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
     }
@@ -146,7 +221,7 @@ public abstract class UserView {
         new MainApp();
     }
 
-    private void showMessageDialog(String message) {
+    private static void showMessageDialog(String message) {
         JOptionPane.showMessageDialog(null, message);
     }
 

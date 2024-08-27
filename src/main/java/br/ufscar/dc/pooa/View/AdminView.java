@@ -74,55 +74,9 @@ public class AdminView extends UserView {
 
     }
 
-    public static void showCreateAccountDialog() throws SQLException, ClassNotFoundException, ParseException {
-        JTextField usernameField = new JTextField();
-        JPasswordField passwordField = new JPasswordField();
-        JPasswordField confirmPasswordField = new JPasswordField();
-        JTextField emailField = new JTextField();
-        JTextField birthdayField = new JTextField();
 
-        Object[] message = {
-                "Username:", usernameField,
-                "Password:", passwordField,
-                "Confirm Password", confirmPasswordField,
-                "Email:", emailField,
-                "Birthday(dd/MM/yyyy):", birthdayField
-        };
 
-        if (showConfirmDialog("Create Account", message)) {
-            processAccountCreation(usernameField, passwordField, confirmPasswordField, emailField, birthdayField);
-        }
-    }
 
-    private static void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField) {
-        try {
-            String username = usernameField.getText();
-            String password = new String(passwordField.getPassword());
-            String confirmPassword = new String(confirmPasswordField.getPassword());
-            String email = emailField.getText();
-
-            if (!Client_Service.getInstance().isValidEmail(email)) {
-                showMessageDialog("Email inválido!");
-                return;
-            }
-
-            if (!password.equals(confirmPassword)) {
-                showMessageDialog("Passwords do not match!");
-                return;
-            }
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            Date birthday = dateFormat.parse(birthdayField.getText());
-
-            if (Client_Service.getInstance().createUser(username, password, email, birthday)) {
-                showMessageDialog("Account created successfully!");
-            } else {
-                showMessageDialog("Failed to create account! Username already exists");
-            }
-        } catch (SQLException | ClassNotFoundException | ParseException ex) {
-            showErrorDialog(ex);
-        }
-    }
 
 
 

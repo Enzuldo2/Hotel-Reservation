@@ -59,25 +59,25 @@ public class Reserva_Service {
         int quantidade_quartos = Quarto_Service.getInstance().quantidade_quartos_para_tipo(tipo_quarto);
 
         for (Reserva reserva : ReservaDAO.readReservas()) {
-            for(Estadia estadia : estadias){
-                // Verifica se o tipo de quarto é o mesmo
-                if (reserva.getCategoria().getRoomType().equals(tipo_quarto)) {
-                    // Verifica se as datas colidem
-                    if (datasColidem(data_inicial, data_fim, reserva.getDataEntrada(), reserva.getDataSaida())) {
-                        // Verifica se o quarto está reservado
-                        if (reserva.getReserved()) {
-                            quantidade_quartos--;
-                        }
-                    }
-                }
-                // Verifica se o quarto estara ocupado por uma estadia
-                if(estadia.getQuarto().getBridgeroom().getRoomType().equals(tipo_quarto)){
-                    if(datasColidem(data_inicial, data_fim, estadia.getDataEntrada(), estadia.getDataSaida())){
-                        quantidade_quartos--;
-                    }
+            // Verifica se o tipo de quarto é o mesmo
+           if (reserva.getCategoria().getRoomType().equals(tipo_quarto)) {
+               // Verifica se as datas colidem
+               if (datasColidem(data_inicial, data_fim, reserva.getDataEntrada(), reserva.getDataSaida())) {
+                   // Verifica se o quarto está reservado
+                   if (reserva.getReserved()) {
+                       quantidade_quartos--;
+                   }
+               }
+           }
+        }
+        for (Estadia estadia : estadias) {
+            // Verifica se o tipo de quarto é o mesmo
+            if (estadia.getQuarto().getBridgeroom().getRoomType().equals(tipo_quarto)) {
+                // Verifica se as datas colidem
+                if (datasColidem(data_inicial, data_fim, estadia.getDataEntrada(), estadia.getDataSaida())) {
+                    quantidade_quartos--;
                 }
             }
-
         }
 
         return quantidade_quartos > 0;

@@ -1,7 +1,6 @@
 package br.ufscar.dc.pooa.View;
 
-import br.ufscar.dc.pooa.Model.domain.users.Client;
-import br.ufscar.dc.pooa.Service.Client_Service;
+
 
 
 import javax.swing.*;
@@ -9,6 +8,8 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.ParseException;
+
+import static br.ufscar.dc.pooa.View.UserView.getjLabel;
 
 public class MainApp {
     private JFrame frame;
@@ -51,18 +52,7 @@ public class MainApp {
     }
 
     protected JLabel createWelcomeLabel(String imagePath, String welcomeMessage) {
-        ImageIcon imageIcon = new ImageIcon(imagePath);
-        JLabel label = new JLabel(welcomeMessage,imageIcon, JLabel.CENTER);
-
-        label.setHorizontalTextPosition(JLabel.CENTER);
-        label.setVerticalTextPosition(JLabel.CENTER);
-
-        label.setFont(new Font("Serif", Font.BOLD, 36));
-        label.setForeground(Color.WHITE);
-        label.setOpaque(true);
-        label.setBackground(new Color(0, 0, 0, 100));
-
-        return label;
+        return getjLabel(imagePath, welcomeMessage);
     }
 
     private JMenuBar createMenuBarBasicItems() {
@@ -72,7 +62,7 @@ public class MainApp {
         JMenuItem loginItem = createMenuItem("Login", e -> showLoginDialog());
         JMenuItem createAccountItem = createMenuItem("Create Account", e -> {
             try {
-                AdminView.showCreateAccountDialog();
+                UserView.showCreateAccountDialog();
             } catch (SQLException | ClassNotFoundException | ParseException ex) {
                 showErrorDialog(ex);
             }
@@ -159,18 +149,7 @@ public class MainApp {
     }
 
     private void userLogin(String username, String password) {
-        try {
-            Client userLogin = Client_Service.getInstance().haveClient(username, password);
-            if (userLogin != null) {
-                showMessageDialog("Login successful!");
-                new ClientView(userLogin);
-                closeWindow();
-            } else {
-                showMessageDialog("Login failed!");
-            }
-        } catch (SQLException | ClassNotFoundException e) {
-            showErrorDialog(e);
-        }
+        UserView.login(username, password);
     }
 
     private void showErrorDialog(Exception ex) {
