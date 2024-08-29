@@ -8,9 +8,7 @@ import br.ufscar.dc.pooa.dao.ReservaDAO;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class Reserva_Service {
     private static Reserva_Service instance = null;
@@ -54,43 +52,36 @@ public class Reserva_Service {
             return false;
         }
 
-        List<Estadia> estadias = Estadia_Service.getInstance().getEstadias();
-
+        // Obter a quantidade total de quartos disponíveis para o tipo solicitado
         int quantidade_quartos = Quarto_Service.getInstance().quantidade_quartos_para_tipo(tipo_quarto);
 
+        // Inicializa o calendário de disponibilidade
+        CalendarioDisponibilidade calendario = new CalendarioDisponibilidade(quantidade_quartos);
+
+        // Adiciona todas as reservas existentes ao calendário
         for (Reserva reserva : ReservaDAO.readReservas()) {
-            // Verifica se o tipo de quarto é o mesmo
-           if (reserva.getCategoria().getRoomType().equals(tipo_quarto)) {
-               // Verifica se as datas colidem
-               if (datasColidem(data_inicial, data_fim, reserva.getDataEntrada(), reserva.getDataSaida())) {
-                   // Verifica se o quarto está reservado
-                   if (reserva.getReserved()) {
-                       quantidade_quartos--;
-                   }
-               }
-           }
-        }
-        for (Estadia estadia : estadias) {
-            // Verifica se o tipo de quarto é o mesmo
-            if (estadia.getQuarto().getBridgeroom().getRoomType().equals(tipo_quarto)) {
-                // Verifica se as datas colidem
-                if (datasColidem(data_inicial, data_fim, estadia.getDataEntrada(), estadia.getDataSaida())) {
-                    quantidade_quartos--;
-                }
+            if (reserva.getCategoria().getRoomType().equals(tipo_quarto)) {
+                calendario.registrarReserva(reserva.getDataEntrada(), reserva.getDataSaida());
             }
         }
 
-        return quantidade_quartos > 0;
+        // Adiciona todas as estadias existentes ao calendário
+        for (Estadia estadia : Estadia_Service.getInstance().getEstadias()) {
+            if (estadia.getQuarto().getBridgeroom().getRoomType().equals(tipo_quarto)) {
+                calendario.registrarReserva(estadia.getDataEntrada(), estadia.getDataSaida());
+            }
+        }
+
+        // Verifica se há disponibilidade no período solicitado
+        return calendario.temDisponibilidade(data_inicial, data_fim);
     }
 
     private boolean isValidDateRange(Date dataAtual, Date data_inicial, Date data_fim) {
-        // Verifica se a data de entrada é depois ou igual a data atual
         if (data_inicial.before(dataAtual)) {
             System.out.println("erro foi aqui " + data_inicial + " " + dataAtual);
             throw new IllegalArgumentException("Data de entrada é antes da data atual.");
         }
 
-        // Verifica se a data de saída é depois da data de entrada
         if (data_fim.before(data_inicial)) {
             System.out.println("erro foi aqui " + data_fim + " " + data_inicial);
             throw new IllegalArgumentException("Data de saída é antes da data de entrada.");
@@ -99,14 +90,9 @@ public class Reserva_Service {
         return true;
     }
 
-    private boolean datasColidem(Date data_inicial, Date data_fim, Date dataEntradaReserva, Date dataSaidaReserva) {
-        // Verifica se o intervalo de datas da reserva colide com o intervalo da reserva atual
-        return !data_fim.before(dataEntradaReserva) && !data_inicial.after(dataSaidaReserva);
-    }
-
     public Date parseDate(String dateString) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        dateFormat.setLenient(false); // Desativa o modo lenient para impedir datas como 42/08/2024
+        dateFormat.setLenient(false);
         return dateFormat.parse(dateString);
     }
 

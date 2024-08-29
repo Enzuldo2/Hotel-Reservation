@@ -85,7 +85,10 @@ public class AdminView extends UserView {
         JTextArea reservaQuartoText = createTextArea("Para reservar um quarto para um cliente, informe o ID do cliente, o periodo da reserva e a Categoria do quarto desejado.\n" +
                 "Temos como Categoria disponiveis:\n" +
                 "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n" +
-                "Quartos Familia tem capacidade de 4 a 6 pessoas, Single de 1 a 2 pessoas e Suite de 2 a 4 pessoas.");
+                "Quartos Familia tem capacidade de 4 a 6 pessoas, Single de 1 a 2 pessoas e Suite de 2 a 4 pessoas."+
+                "Check-in: 14:00\n"+
+                "Check-out: 12:00\n\n"+
+                "Caso a reserva não esteja disponivel, o cliente será colocado na lista de espera, Informe o cliente disso.\n");
         panel1.add(new JScrollPane(reservaQuartoText), BorderLayout.CENTER);
 
         JButton showInputFieldsButton = createButton("Reservar", e -> showReservaDialogAdmin());
@@ -426,17 +429,23 @@ public class AdminView extends UserView {
             showErrorDialog(ex);
         }
 
-        JButton cancelEstadiaButton = createButton("Check-OUT", e -> cancelEstadia());
+        JButton cancelEstadiaButton = createButton("Check-OUT", e -> {
+            try {
+                cancelEstadia();
+            } catch (SQLException | ClassNotFoundException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
         panel1.add(cancelEstadiaButton, BorderLayout.SOUTH);
 
 
         refreshPanel();
     }
 
-    private void cancelEstadia() {
-        int id = Integer.parseInt(showInputDialog("Digite o ID da estadia a ser cancelada:"));
+    private void cancelEstadia() throws SQLException, ClassNotFoundException {
+        int id = Integer.parseInt(showInputDialog("Digite o ID da estadia a ser cancelada/Check-OUT:"));
         if(Estadia_Service.getInstance().DeleteEstadia(id)){
-            showMessageDialog("Estadia cancelada com sucesso!");
+            showMessageDialog("Estadia removida com sucesso!");
         }else{
             showMessageDialog("Falha ao cancelar estadia");
         }

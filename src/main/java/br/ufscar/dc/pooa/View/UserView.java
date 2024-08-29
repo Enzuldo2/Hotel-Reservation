@@ -10,6 +10,7 @@ import br.ufscar.dc.pooa.Service.Waiting_List_Service;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,29 +19,20 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class UserView {
-    protected static JFrame frame;
+    protected JFrame frame;
     protected JPanel panel1;
 
     public UserView(String title) {
         initializeUI(title);
     }
 
-    public static void login(String username, String password) {
-        try {
-            Client user = Client_Service.getInstance().haveClient(username, password);
-            if(user != null) {
-                new ClientView(user);
-            } else {
-                showMessageDialog("Login failed! Invalid username or password");
-            }
-        } catch (SQLException | ClassNotFoundException ex) {
-            showErrorDialog(ex);
-        }
-    }
+
 
     private void initializeUI(String title) {
         frame = createFrame(title, 800, 600);
         panel1 = new JPanel(new BorderLayout());
+
+        frame.setIconImage(new ImageIcon("C:\\Users\\enzod\\Desktop\\icon_hotel2.png").getImage());
 
         // Adiciona uma mensagem de boas-vindas
         JLabel welcomeLabel = createWelcomeLabel("C:\\Users\\enzod\\Desktop\\imagem_de_inicio.jpeg", "Bem-vindo ao Nosso Hotel!");
@@ -76,6 +68,15 @@ public abstract class UserView {
         return label;
     }
 
+    JMenuItem createMenuItem(String text, ActionListener listener, String iconPath) {
+        JMenuItem menuItem = new JMenuItem(text);
+        menuItem.addActionListener(listener);
+        if (iconPath != null && !iconPath.isEmpty()) {
+            menuItem.setIcon(new ImageIcon(iconPath));
+        }
+        return menuItem;
+    }
+
     public static void viewQuartoSemLogin() throws SQLException, ClassNotFoundException {
         Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
         Date dataFim = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
@@ -87,6 +88,7 @@ public abstract class UserView {
                 if (room.getBridgeroom().getRoomType().equals("Single") && !room.isReserved()) {
                     textArea.append("Temos Quarto Single disponivel para hoje!\n");
                     tipos++;
+                    break;
                 }
             }
 
@@ -96,6 +98,7 @@ public abstract class UserView {
                 if (room.getBridgeroom().getRoomType().equals("Familia") && !room.isReserved()) {
                     textArea.append("Temos Quarto Familia disponivel para hoje!\n");
                     tipos++;
+                    break;
                 }
             }
         }
@@ -104,6 +107,7 @@ public abstract class UserView {
                 if (room.getBridgeroom().getRoomType().equals("Suite") && !room.isReserved()) {
                     textArea.append("Temos Quarto Suite disponivel para hoje!\n");
                     tipos++;
+                    break;
                 }
             }
         }
@@ -133,7 +137,7 @@ public abstract class UserView {
         textArea.append("Reservado: " + reserva.getReserved() + "\n\n");
     }
 
-    public static void showCreateAccountDialog() throws SQLException, ClassNotFoundException, ParseException {
+    public void showCreateAccountDialog() throws SQLException, ClassNotFoundException, ParseException {
         JTextField usernameField = new JTextField();
         JPasswordField passwordField = new JPasswordField();
         JPasswordField confirmPasswordField = new JPasswordField();
@@ -157,7 +161,7 @@ public abstract class UserView {
         return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
     }
 
-    private static void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField) {
+    public void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField) {
         try {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
@@ -211,7 +215,7 @@ public abstract class UserView {
 
 
 
-    static void showErrorDialog(Exception ex) {
+    public void showErrorDialog(Exception ex) {
         JOptionPane.showMessageDialog(frame, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
     }
 

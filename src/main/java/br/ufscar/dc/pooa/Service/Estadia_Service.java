@@ -113,8 +113,9 @@ public class Estadia_Service {
         return estadias;
     }
 
-    public boolean DeleteEstadia(int id) {
+    public boolean DeleteEstadia(int id) throws SQLException, ClassNotFoundException {
         boolean deleted = false;
+        estadias = getEstadias();
         try {
             for(Estadia e : estadias){
                 if(e.getId() == id){

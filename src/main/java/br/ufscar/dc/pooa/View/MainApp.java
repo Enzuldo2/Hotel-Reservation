@@ -3,91 +3,62 @@ package br.ufscar.dc.pooa.View;
 
 
 
+import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Service.Client_Service;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.ParseException;
 
-import static br.ufscar.dc.pooa.View.UserView.getjLabel;
 
-public class MainApp {
-    private JFrame frame;
-    private JPanel panel1;
+public class MainApp extends UserView {
 
     public MainApp() {
-        initializeUI();
-    }
-
-    private void initializeUI() {
-        frame = createFrame("Bem vindo ao APP do nosso Hotel", 500, 400);
-        panel1 = createPanel(new BorderLayout(), new Dimension(400, 300));
-        frame.setContentPane(panel1);
-        createMenuBarBasic();
+        super("Bem vindo ao APP do nosso Hotel");
+        createMenuBar(null);
     }
 
 
-
-    private JFrame createFrame(String title, int width, int height) {
-        JFrame frame = new JFrame(title);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(new Dimension(width, height));
-        frame.setVisible(true);
-        return frame;
-    }
-
-    private JPanel createPanel(LayoutManager layout, Dimension dimension) {
-        JPanel panel = new JPanel(layout);
-        panel.setPreferredSize(dimension);
-        return panel;
-    }
-
-    private void createMenuBarBasic() {
-        panel1.removeAll();
-        JLabel welcomeLabel = createWelcomeLabel("C:\\Users\\enzod\\Desktop\\nova_foto.jpeg", "Bem-vindo ao Nosso Hotel!");
-        panel1.add(welcomeLabel, BorderLayout.CENTER);
-        frame.setJMenuBar(createMenuBarBasicItems());
-        createMenuBarBasicItems();
-        refreshPanel();
-    }
-
-    protected JLabel createWelcomeLabel(String imagePath, String welcomeMessage) {
-        return getjLabel(imagePath, welcomeMessage);
-    }
-
-    private JMenuBar createMenuBarBasicItems() {
+    @Override
+    protected void createMenuBar(Client user) {
         JMenuBar menuBar = new JMenuBar();
         JMenu optionsMenu = new JMenu("Options");
 
-        JMenuItem loginItem = createMenuItem("Login", e -> showLoginDialog());
+        JMenuItem loginItem = createMenuItem("Login", e -> showLoginDialog() , "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\dados_icon.png");
         JMenuItem createAccountItem = createMenuItem("Create Account", e -> {
             try {
-                UserView.showCreateAccountDialog();
+                super.showCreateAccountDialog();
             } catch (SQLException | ClassNotFoundException | ParseException ex) {
                 showErrorDialog(ex);
             }
-        });
+        },"C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\criar_conta_icon.png");
         JMenuItem viewJobsItem = createMenuItem("Informações Sobre Disponibilidade de Quartos", e -> {
             try {
                 viewQuartos();
             } catch (SQLException | ClassNotFoundException ex) {
                 throw new RuntimeException(ex);
             }
-        });
+        },"C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\quarto_icon.png");
 
         optionsMenu.add(loginItem);
         optionsMenu.add(createAccountItem);
         optionsMenu.add(viewJobsItem);
         menuBar.add(optionsMenu);
 
-        return menuBar;
+        frame.setJMenuBar(menuBar);
     }
+
 
     private void viewQuartos() throws SQLException, ClassNotFoundException {
         panel1.removeAll();
         JTextArea vagasTextArea = createTextArea("Caso Tenha Quartos disponiveis Para Reserva Hoje:\n" +
                 "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n"+
-                "Caso queira reservar um quarto, por favor, faça o login ou vá a recepção do Hotel.\n\n");
+                "Caso queira reservar um quarto, por favor, faça o login ou vá a recepção do Hotel.\n\n"+
+                "Check-in: 14:00\n"+
+                "Check-out: 12:00\n\n"+
+                "Obrigado por escolher o nosso Hotel!");
         panel1.add(new JScrollPane(vagasTextArea), BorderLayout.CENTER);
 
         UserView.viewQuartoSemLogin();
@@ -96,12 +67,6 @@ public class MainApp {
     }
 
 
-
-    private JMenuItem createMenuItem(String text, ActionListener listener) {
-        JMenuItem menuItem = new JMenuItem(text);
-        menuItem.addActionListener(listener);
-        return menuItem;
-    }
 
     private JTextArea createTextArea(String text) {
         JTextArea textArea = new JTextArea(text);
@@ -123,7 +88,7 @@ public class MainApp {
                 new AdminView();
                 closeWindow();
             } else {
-                userLogin(username, password);
+                userlogin(username, password);
             }
         } else {
             showMessageDialog("Login failed!");
@@ -131,10 +96,6 @@ public class MainApp {
 
     }
 
-    private void refreshPanel() {
-        panel1.revalidate();
-        panel1.repaint();
-    }
 
     private boolean showConfirmDialog(String title, Object[] message) {
         return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
@@ -144,17 +105,27 @@ public class MainApp {
         JOptionPane.showMessageDialog(null, message);
     }
 
+
     private boolean isAdmin(String username, String password) {
         return "admin".equals(username) && "admin".equals(password);
     }
 
-    private void userLogin(String username, String password) {
-        UserView.login(username, password);
+    private void userlogin(String username, String password) {
+        try {
+            Client user = Client_Service.getInstance().haveClient(username, password);
+            if(user != null) {
+                showMessageDialog("Login successful!");
+                new ClientView(user);
+                closeWindow();
+            } else {
+                showMessageDialog("Login failed! Invalid username or password");
+            }
+        } catch (SQLException | ClassNotFoundException ex) {
+            showErrorDialog(ex);
+        }
     }
 
-    private void showErrorDialog(Exception ex) {
-        JOptionPane.showMessageDialog(frame, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
-    }
+
 
     private void closeWindow() {
         frame.dispose();

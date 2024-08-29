@@ -3,7 +3,6 @@ package br.ufscar.dc.pooa.Service;
 
 import br.ufscar.dc.pooa.Model.domain.users.Client;
 import br.ufscar.dc.pooa.Model.domain.users.Factory_Person;
-import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.dao.ClientDAO;
 
 import java.sql.SQLException;

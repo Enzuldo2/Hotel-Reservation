@@ -26,11 +26,11 @@ public class ClientView extends UserView {
         JMenuBar menuBar = new JMenuBar();
         JMenu optionsMenu = new JMenu("Options");
 
-        JMenuItem viewRoomsItem = createMenuItem("Informações Sobre Disponibilidade de Quartos", e -> viewQuartos(), "path/to/viewRoomsIcon.png");
-        JMenuItem makeReservationItem = createMenuItem("Fazer Reserva", e -> reservaQuartoUser(user), "path/to/makeReservationIcon.png");
-        JMenuItem viewReservationsItem = createMenuItem("Minhas Reservas", e -> viewReservas(user), "path/to/viewReservationsIcon.png");
-        JMenuItem exitItem = createMenuItem("Sair", e -> super.logout(), "path/to/exitIcon.png");
-        JMenuItem olhardados = createMenuItem("Olhar Meus Dados", e -> olharDados(user), "path/to/exitIcon.png");
+        JMenuItem viewRoomsItem = createMenuItem("Informações Sobre Disponibilidade de Quartos", e -> viewQuartos(), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\quarto_icon.png");
+        JMenuItem makeReservationItem = createMenuItem("Fazer Reserva", e -> reservaQuartoUser(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\reserva_icon.png");
+        JMenuItem viewReservationsItem = createMenuItem("Minhas Reservas", e -> viewReservas(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\icon_hotel2.png");
+        JMenuItem exitItem = createMenuItem("Sair", e -> super.logout(), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\sair_icon.png");
+        JMenuItem olhardados = createMenuItem("Olhar Meus Dados", e -> olharDados(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\dados_icon.png");
 
         optionsMenu.add(viewRoomsItem);
         optionsMenu.add(makeReservationItem);
@@ -111,21 +111,16 @@ public class ClientView extends UserView {
     }
 
 
-    private JMenuItem createMenuItem(String text, ActionListener listener, String iconPath) {
-        JMenuItem menuItem = new JMenuItem(text);
-        menuItem.addActionListener(listener);
-        if (iconPath != null && !iconPath.isEmpty()) {
-            menuItem.setIcon(new ImageIcon(iconPath));
-        }
-        return menuItem;
-    }
 
     private void viewQuartos() {
         panel1.removeAll();
         JTextArea vagasTextArea = createTextArea("Caso tenha Quartos disponiveis, segue informações:\n" +
                 "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n"+
+                "Check-in: 14:00\n"+
+                "Check-out: 12:00\n\n"+
                 "A reserva pode ser feita via aba de Opções -> Fazer Reserva\n\n" +
-                "Ou na recepção do Hotel.\n\n");
+                "Ou na recepção do Hotel.\n\n"+
+                "Obrigado por escolher o nosso Hotel!");
         panel1.add(new JScrollPane(vagasTextArea), BorderLayout.CENTER);
 
         try {
@@ -145,7 +140,11 @@ public class ClientView extends UserView {
         JTextArea reservaQuartoText = createTextArea("Para reservar um quarto, Informe o periodo da reserva e a Categoria do quarto desejado.\n" +
                 "Temos como Categoria disponiveis:\n" +
                 "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n" +
-                "Quartos Familia tem capacidade de 4 a 6 pessoas, Single de 1 a 2 pessoas e Suite de 2 a 4 pessoas.");
+                "Quartos Familia tem capacidade de 4 a 6 pessoas, Single de 1 a 2 pessoas e Suite de 2 a 4 pessoas."+
+                "Check-in: 14:00\n"+
+                "Check-out: 12:00\n\n"+
+                "Obrigado por escolher o nosso Hotel!\n"+
+                "Caso queira Saber os Tipos de Quartos disponiveis para Hoje vá para -> Opções -> Informações Sobre Disponibilidade de Quartos");
         panel1.add(new JScrollPane(reservaQuartoText), BorderLayout.CENTER);
 
         JButton showInputFieldsButton = createButton("Reservar", e -> {
@@ -190,7 +189,9 @@ public class ClientView extends UserView {
                 showMessageDialog("Reserva feita com sucesso!");
             } else {
                 if(dataAtual.equals(dataInicialDate)){
-                    throw new IllegalArgumentException("Hoje não temos quartos desse tipo disponiveis");
+                    throw new IllegalArgumentException("Infelizmente não temos quartos disponiveis para essa Data :( \n"+
+                            "Talvez tentar outro dia ou outro tipo de Quarto.\n"+
+                            "Caso queira mais informações, vá a recepção do Hotel.");
                 }
                 showMessageDialog("Falha na reserva do quarto\n" + "Não temos quartos disponiveis do tipo " + tipoQuarto + " para o periodo informado");
                 super.observerService(user, reserva_Service.get_Ids(dataInicialDate, dataEndDate, tipoQuarto));
