@@ -3,7 +3,7 @@
 usando como MySQL como Banco de dados, usando a ferramenta XAMP para gerir o banco, local do BD : [http://localhost/phpmyadmin/index.php?route=/sql&db=hotel&table=client&pos=0](http://localhost/phpmyadmin/index.php?route=/database/structure&db=hotel)
 
 Estamos utilizando Padrões de Projeto para esse sistema, Como Factory, Observer e Brigde. alem de uma Arquitetura MVC.
-onde controller seria o nosso packege Serviços.
+onde o packege controller seria o nosso packege Serviços.
 
 ### Conceitos
 - Associação Binaria com Navegabilidade
