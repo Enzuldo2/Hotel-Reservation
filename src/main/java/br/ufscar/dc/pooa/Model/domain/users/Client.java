@@ -22,7 +22,7 @@ class Client implements Person {
         this.setEmail(email);
         this.setPhone(phone);
     }
-    
+
 
     public void setId(int id) {
         setPersonId(id);

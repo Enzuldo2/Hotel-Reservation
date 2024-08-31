@@ -1,7 +1,7 @@
 package br.ufscar.dc.pooa.Service;
 
 
-import br.ufscar.dc.pooa.Model.domain.users.Client;
+
 import br.ufscar.dc.pooa.Model.domain.users.Factory_Person;
 import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.dao.ClientDAO;
@@ -51,7 +51,7 @@ public class Client_Service {
             logger.info("Invalid email");
             return false;
         }
-        Client user = (Client) Factory_Person.createPerson(username, password, email, birthday,phone);
+        Person user = Factory_Person.createClient(username, password, email, birthday,phone);
         clients.add(user);
         ClientDAO.createClient(username, password, email, birthday,phone);
         logger.info("User created successfully");

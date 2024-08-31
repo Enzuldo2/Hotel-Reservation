@@ -22,7 +22,7 @@ public class ClientDAO {
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery();
         while (rs.next()) {
-            Person client = Factory_Person.createPerson("null", "null", "null", new Date(), "null");
+            Person client = Factory_Person.createClient("null", "null", "null", new Date(), "null");
             settingAtributes(rs, client);
             clients.add(client);
         }
@@ -99,7 +99,7 @@ public class ClientDAO {
         ResultSet rs = pst.executeQuery();
         Person client = null;
         if (rs.next()) {
-            client = Factory_Person.createPerson("null", "null", "null", new Date(), "null");
+            client = Factory_Person.createClient("null", "null", "null", new Date(), "null");
             settingAtributes(rs, client);
         }
         connection.close();
