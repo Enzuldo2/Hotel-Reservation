@@ -1,6 +1,6 @@
 package br.ufscar.dc.pooa.View;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.Service.Client_Service;
 import br.ufscar.dc.pooa.Service.Reserva_Service;
 
@@ -16,13 +16,13 @@ import java.util.List;
 
 public class ClientView extends UserView {
 
-    public ClientView(Client user) {
+    public ClientView(Person user) {
         super("Cliente - Bem-vindo");
         createMenuBar(user);
     }
 
     @Override
-    protected void createMenuBar(Client user) {
+    protected void createMenuBar(Person user) {
         JMenuBar menuBar = new JMenuBar();
         JMenu optionsMenu = new JMenu("Options");
 
@@ -42,15 +42,21 @@ public class ClientView extends UserView {
         frame.setJMenuBar(menuBar);
     }
 
-    private void olharDados(Client user) {
+    private void olharDados(Person user) {
         panel1.removeAll();
         JTextArea dadosTextArea = createTextArea("Seus Dados:\n");
         panel1.add(new JScrollPane(dadosTextArea), BorderLayout.CENTER);
 
-        dadosTextArea.append("ID: " + user.getId() + "\n");
+        dadosTextArea.append("ID: " + user.getPersonId() + "\n");
         dadosTextArea.append("Nome: " + user.getName() + "\n");
         dadosTextArea.append("Senha: " + user.getPassword() + "\n");
         dadosTextArea.append("Email: " + user.getEmail() + "\n");
+        if(user.getPhone() != null) {
+            dadosTextArea.append("Telefone: " + user.getPhone() + "\n");
+        }
+        else{
+            dadosTextArea.append("Telefone: Não informado\n");
+        }
         if(user.getBirthday() != null) {
             dadosTextArea.append("Data de Nascimento: " + user.getBirthday() + "\n\n\n");
         }
@@ -68,28 +74,30 @@ public class ClientView extends UserView {
         refreshPanel();
     }
 
-    private void updateDados(Client user) {
+    private void updateDados(Person user) {
         panel1.removeAll();
         JTextField nameField = new JTextField();
         JTextField emailField = new JTextField();
         JTextField passwordField = new JTextField();
         JTextField birthdayField = new JTextField();
+        JTextArea  phoneField = new JTextArea();
 
         Object[] message = {
                 "Nome:", nameField,
                 "Email:", emailField,
                 "Senha:", passwordField,
-                "Data de Nascimento dd/MM/yyyy", birthdayField
+                "Data de Nascimento dd/MM/yyyy", birthdayField,
+                "Telefone:", phoneField
         };
 
         if (showConfirmDialog("Atualizar Dados(Se não quiser mudar deixar vazio)", message)) {
-            processUpdateDados(user, nameField.getText(), emailField.getText(), passwordField.getText(), birthdayField.getText());
+            processUpdateDados(user, nameField.getText(), emailField.getText(), passwordField.getText(), birthdayField.getText(), phoneField.getText());
         } else {
             showMessageDialog("Falha na atualização dos dados");
         }
     }
 
-    private void processUpdateDados(Client user, String text, String text1, String text2, String text3) {
+    private void processUpdateDados(Person user, String text, String text1, String text2, String text3, String text4) {
         try {
             if (!text.isEmpty()) {
                 user.setName(text);
@@ -103,8 +111,15 @@ public class ClientView extends UserView {
             if (!text3.isEmpty()) {
                 user.setBirthday(new SimpleDateFormat("dd/MM/yyyy").parse(text3));
             }
-            Client_Service.getInstance().updateUser(user);
-            showMessageDialog("Dados atualizados com sucesso!");
+            if (!text4.isEmpty()) {
+                user.setPhone(text4);
+            }
+            if(Client_Service.getInstance().updateUser(user)){
+                showMessageDialog("Dados atualizados com sucesso!");
+            }
+            else{
+                showMessageDialog("Falha na atualização dos dados");
+            }
         } catch (Exception ex) {
             showErrorDialog(ex);
         }
@@ -135,7 +150,7 @@ public class ClientView extends UserView {
 
 
 
-    private void reservaQuartoUser(Client user) {
+    private void reservaQuartoUser(Person user) {
         panel1.removeAll();
         JTextArea reservaQuartoText = createTextArea("Para reservar um quarto, Informe o periodo da reserva e a Categoria do quarto desejado.\n" +
                 "Temos como Categoria disponiveis:\n" +
@@ -159,7 +174,7 @@ public class ClientView extends UserView {
         refreshPanel();
     }
 
-    private void showReservaDialog(Client user) throws SQLException, ClassNotFoundException {
+    private void showReservaDialog(Person user) throws SQLException, ClassNotFoundException {
         JTextField dataFieldInicial = new JTextField();
         JTextField dataFieldEnd = new JTextField();
         JTextField categoriaField = new JTextField();
@@ -177,7 +192,7 @@ public class ClientView extends UserView {
         }
     }
 
-    private void processReserva(Client user, String dataInicial, String dataEnd, String tipoQuarto) throws SQLException, ClassNotFoundException {
+    private void processReserva(Person user, String dataInicial, String dataEnd, String tipoQuarto) throws SQLException, ClassNotFoundException {
         Reserva_Service reserva_Service = Reserva_Service.getInstance();
         try {
             Date dataInicialDate = reserva_Service.parseDate(dataInicial);
@@ -206,13 +221,13 @@ public class ClientView extends UserView {
 
 
 
-    private void viewReservas(Client user) {
+    private void viewReservas(Person user) {
         panel1.removeAll();
         JTextArea reservasTextArea = createTextArea("Suas Reservas:\n");
         panel1.add(new JScrollPane(reservasTextArea), BorderLayout.CENTER);
 
         try {
-            List<Reserva> reservas = Reserva_Service.getInstance().getReservas(user.getId());
+            List<Reserva> reservas = Reserva_Service.getInstance().getReservas(user.getPersonId());
             reservas.forEach(reserva -> super.appendReservaInfo(reservasTextArea, reserva));
 
             JButton cancelReservaButton = createButton("Cancelar Reserva", e -> cancelReserva());

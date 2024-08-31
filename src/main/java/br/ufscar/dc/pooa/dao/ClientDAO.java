@@ -9,24 +9,20 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
+import java.util.List;
+
 
 public class ClientDAO {
 
-    public static ArrayList<Client> readClientslist() throws SQLException, ClassNotFoundException {
-        ArrayList<Client> clients = new ArrayList<>();
+    public static List<Person> readClientslist() throws SQLException, ClassNotFoundException {
+        ArrayList<Person> clients = new ArrayList<>();
         Connection connection = ConexaoUtil.getInstance().Connection();
         String query = "SELECT * FROM client";
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery();
         while (rs.next()) {
-            Client client = new Client();
-            client.setId(rs.getInt("id"));
-            client.setName(rs.getString("name"));
-            client.setPassword(rs.getString("password"));
-            client.setEmail(rs.getString("email"));
-            client.setBirthday(rs.getDate("birthday"));
+            Person client = new Client();
+            settingAtributes(rs, client);
             clients.add(client);
         }
 
@@ -36,27 +32,38 @@ public class ClientDAO {
         return clients;
     }
 
-    public static void createClient(String name, String password, String email, Date birthday) throws SQLException, ClassNotFoundException {
+    private static void settingAtributes(ResultSet rs, Person client) throws SQLException {
+        client.setPersonId(rs.getInt("id"));
+        client.setName(rs.getString("name"));
+        client.setPassword(rs.getString("password"));
+        client.setEmail(rs.getString("email"));
+        client.setBirthday(rs.getDate("birthday"));
+        client.setPhone(rs.getString("telefone"));
+    }
+
+    public static void createClient(String name, String password, String email, Date birthday,String phone) throws SQLException, ClassNotFoundException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "INSERT INTO client (name, password, email, birthday) VALUES (?, ?, ?, ?)";
+        String query = "INSERT INTO client (name, password, email, birthday,telefone) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement pst = connection.prepareStatement(query);
-        pst.setString(1, name);
-        pst.setString(2, password);
-        pst.setString(3, email);
-        pst.setDate(4, new java.sql.Date(birthday.getTime()));
+        preparingStatment(pst , name, password, email, birthday, phone);
         pst.executeUpdate();
         connection.close();
     }
 
-    public static void update(int id, String name, String password, String email, Date birthday) throws SQLException, ClassNotFoundException {
-        Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "UPDATE client SET name = ?, password = ?, email = ?, birthday = ? WHERE id = ?";
-        PreparedStatement pst = connection.prepareStatement(query);
+    private static void preparingStatment(PreparedStatement pst,String name, String password, String email, Date birthday, String phone) throws SQLException {
         pst.setString(1, name);
         pst.setString(2, password);
         pst.setString(3, email);
         pst.setDate(4, new java.sql.Date(birthday.getTime()));
-        pst.setInt(5, id);
+        pst.setString(5, phone);
+    }
+
+    public static void update(int id, String name, String password, String email, Date birthday,String phone) throws SQLException, ClassNotFoundException {
+        Connection connection = ConexaoUtil.getInstance().Connection();
+        String query = "UPDATE client SET name = ?, password = ?, email = ?, birthday = ?, telefone = ? WHERE id = ?";
+        PreparedStatement pst = connection.prepareStatement(query);
+        preparingStatment(pst,name, password, email, birthday, phone);
+        pst.setInt(6, id);
         pst.executeUpdate();
         connection.close();
     }
@@ -70,14 +77,11 @@ public class ClientDAO {
         connection.close();
     }
 
-    public static boolean userExists(String username, String password, String email, Date birthday) throws SQLException, ClassNotFoundException {
+    public static boolean userExists(String username, String password, String email, Date birthday,String phone) throws SQLException, ClassNotFoundException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "SELECT COUNT(*) FROM client WHERE name = ? AND password = ? AND email = ? AND birthday = ?";
+        String query = "SELECT COUNT(*) FROM client WHERE name = ? AND password = ? AND email = ? AND birthday = ? AND telefone = ?";
         PreparedStatement pst = connection.prepareStatement(query);
-        pst.setString(1, username);
-        pst.setString(2, password);
-        pst.setString(3, email);
-        pst.setDate(4, new java.sql.Date(birthday.getTime()));
+        preparingStatment(pst ,username, password, email, birthday, phone);
 
         ResultSet rs = pst.executeQuery();
         rs.next();
@@ -95,11 +99,7 @@ public class ClientDAO {
         Client client = null;
         if (rs.next()) {
             client = new Client();
-            client.setId(rs.getInt("id"));
-            client.setName(rs.getString("name"));
-            client.setPassword(rs.getString("password"));
-            client.setEmail(rs.getString("email"));
-            client.setBirthday(rs.getDate("birthday"));
+            settingAtributes(rs, client);
         }
         connection.close();
         return client;

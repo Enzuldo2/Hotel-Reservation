@@ -7,13 +7,25 @@ public interface Person {
 
 
 
-    public int getPersonId();
+    int getPersonId();
 
-    public void setPersonId(int personId);
+    void setPersonId(int personId);
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
+
+    String getEmail();
+
+    void setEmail(String email);
+
+    String getPassword();
+
+    void setPassword(String password);
+
+    String getPhone();
+
+    void setPhone(String phone);
 
     Date getBirthday();
 

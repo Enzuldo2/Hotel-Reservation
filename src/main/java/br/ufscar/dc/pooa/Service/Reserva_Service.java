@@ -2,7 +2,7 @@ package br.ufscar.dc.pooa.Service;
 
 import br.ufscar.dc.pooa.Model.domain.Reserva.Estadia;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.dao.ReservaDAO;
 
 import java.sql.SQLException;
@@ -25,7 +25,7 @@ public class Reserva_Service {
         return instance;
     }
 
-    public boolean makeReservation(Client user, Date dataAtual, Date data_inicial, Date data_fim, String tipo_quarto) throws SQLException, ClassNotFoundException, ParseException {
+    public boolean makeReservation(Person user, Date dataAtual, Date data_inicial, Date data_fim, String tipo_quarto) throws SQLException, ClassNotFoundException, ParseException {
         if (verifica_Reserva(dataAtual ,data_inicial, data_fim, tipo_quarto)) {
             var tipo = Quarto_Service.getInstance().getBridgeRoom(tipo_quarto);
             Reserva reserva = new Reserva(user, tipo, dataAtual, data_inicial, data_fim, true);

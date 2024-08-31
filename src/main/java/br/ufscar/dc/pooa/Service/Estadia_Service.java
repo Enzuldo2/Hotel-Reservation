@@ -3,7 +3,7 @@ package br.ufscar.dc.pooa.Service;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Estadia;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
 import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
-import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.dao.EstadioDAO;
 import br.ufscar.dc.pooa.dao.QuartoDAO;
 
@@ -60,7 +60,6 @@ public class Estadia_Service {
                     if(quarto != null) {
                         rerserva_temp = r;
                         Reserva_Service.getInstance().removeReserva(r); //remove a reserva e exclue a lista de espera
-                        LocalDate hoje = LocalDate.now();
                         Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
                         var bool = Reserva_Service.getInstance().verifica_Reserva(dataAtual, rerserva_temp.getDataEntrada(), rerserva_temp.getDataSaida(), rerserva_temp.getCategoria().getRoomType());
                         if(bool){
@@ -101,7 +100,7 @@ public class Estadia_Service {
 
 
 
-    private void createEstadia(Client cliente, DefaultRoom quarto, Date dataEntrada, Date dataSaida, int pessoas) throws SQLException, ClassNotFoundException {
+    private void createEstadia(Person cliente, DefaultRoom quarto, Date dataEntrada, Date dataSaida, int pessoas) throws SQLException, ClassNotFoundException {
         EstadioDAO.createEstadia(cliente, quarto, dataEntrada, dataSaida,pessoas);
         quarto.setReserved(true);
         QuartoDAO.update(quarto.getId(), quarto.getRoomType(), quarto.getDescription(), quarto.getCapacity(), quarto.getHeight(), quarto.getLength(), quarto.getWidth(), true);
@@ -129,7 +128,7 @@ public class Estadia_Service {
                 }
             }
         } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Error deleting Estadia");
         }
         return deleted;
     }

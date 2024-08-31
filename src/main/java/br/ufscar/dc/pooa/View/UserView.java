@@ -2,7 +2,7 @@ package br.ufscar.dc.pooa.View;
 
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
 import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
-import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.Service.Client_Service;
 import br.ufscar.dc.pooa.Service.Quarto_Service;
 import br.ufscar.dc.pooa.Service.Reserva_Service;
@@ -32,7 +32,9 @@ public abstract class UserView {
         frame = createFrame(title, 800, 600);
         panel1 = new JPanel(new BorderLayout());
 
-        frame.setIconImage(new ImageIcon("C:\\Users\\enzod\\Desktop\\icon_hotel2.png").getImage());
+        if (frame != null) {
+            frame.setIconImage(new ImageIcon("C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\icon_hotel2.png").getImage());
+        }
 
         // Adiciona uma mensagem de boas-vindas
         JLabel welcomeLabel = createWelcomeLabel("C:\\Users\\enzod\\Desktop\\imagem_de_inicio.jpeg", "Bem-vindo ao Nosso Hotel!");
@@ -143,17 +145,19 @@ public abstract class UserView {
         JPasswordField confirmPasswordField = new JPasswordField();
         JTextField emailField = new JTextField();
         JTextField birthdayField = new JTextField();
+        JTextField phoneField = new JTextField();
 
         Object[] message = {
                 "Username:", usernameField,
                 "Password:", passwordField,
                 "Confirm Password", confirmPasswordField,
                 "Email:", emailField,
-                "Birthday(dd/MM/yyyy):", birthdayField
+                "Birthday(dd/MM/yyyy):", birthdayField,
+                "Telefone:", phoneField
         };
 
         if (showConfirmDialog("Create Account", message)) {
-            processAccountCreation(usernameField, passwordField, confirmPasswordField, emailField, birthdayField);
+            processAccountCreation(usernameField, passwordField, confirmPasswordField, emailField, birthdayField,phoneField);
         }
     }
 
@@ -161,14 +165,15 @@ public abstract class UserView {
         return JOptionPane.showConfirmDialog(null, message, title, JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION;
     }
 
-    public void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField) {
+    public void processAccountCreation(JTextField usernameField, JPasswordField passwordField, JPasswordField confirmPasswordField, JTextField emailField, JTextField birthdayField, JTextField phoneField) {
         try {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             String confirmPassword = new String(confirmPasswordField.getPassword());
             String email = emailField.getText();
+            String phone = phoneField.getText();
 
-            if (!Client_Service.getInstance().isValidEmail(email)) {
+            if (Client_Service.getInstance().isValidEmail(email)) {
                 showMessageDialog("Email inválido!");
                 return;
             }
@@ -181,7 +186,7 @@ public abstract class UserView {
             SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             Date birthday = dateFormat.parse(birthdayField.getText());
 
-            if (Client_Service.getInstance().createUser(username, password, email, birthday)) {
+            if (Client_Service.getInstance().createUser(username, password, email, birthday, phone)) {
                 showMessageDialog("Account created successfully!");
             } else {
                 showMessageDialog("Failed to create account! Username already exists");
@@ -196,7 +201,7 @@ public abstract class UserView {
         panel1.repaint();
     }
 
-    void observerService(Client user, List<Integer> ids) {
+    void observerService(Person user, List<Integer> ids) {
         if (JOptionPane.showConfirmDialog(null, "Quarto não disponível. Deseja entrar na lista de espera?", "Lista de Espera", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             try {
                 for (Integer id : ids) {
@@ -230,5 +235,5 @@ public abstract class UserView {
     }
 
     // Método abstrato que deve ser implementado nas subclasses
-    protected abstract void createMenuBar(Client user);
+    protected abstract void createMenuBar(Person user);
 }

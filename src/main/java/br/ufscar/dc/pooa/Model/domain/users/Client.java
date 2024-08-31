@@ -9,22 +9,23 @@ public class Client implements Person {
     private String email;
     private String name;
     private Date birthday;
+    private String phone;
 
 
 
 
-    public Client(String username, String password, String email, Date birthday) {
+    public Client(String username, String password, String email, Date birthday, String phone) {
         super();
         this.birthday = birthday;
         this.setName(username);
         this.setPassword(password);
         this.setEmail(email);
+        this.setPhone(phone);
     }
 
     public Client() {
         super();
     }
-
 
 
     public void setId(int id) {
@@ -40,7 +41,6 @@ public class Client implements Person {
     }
 
 
-
     public String getPassword() {
         return password;
     }
@@ -49,6 +49,15 @@ public class Client implements Person {
         this.password = password;
     }
 
+    @Override
+    public String getPhone() {
+        return phone;
+    }
+
+    @Override
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
 
     public String getEmail() {

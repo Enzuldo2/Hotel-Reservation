@@ -3,7 +3,7 @@ package br.ufscar.dc.pooa.View;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Estadia;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
 import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
-import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.Service.*;
 
 import javax.swing.*;
@@ -25,7 +25,7 @@ public class AdminView extends UserView {
     }
 
     @Override
-    protected void createMenuBar(Client user) {
+    protected void createMenuBar(Person user) {
         JMenuBar menuBar = new JMenuBar();
         JMenu optionsMenu = new JMenu("Options");
 
@@ -361,8 +361,8 @@ public class AdminView extends UserView {
         JTextArea clientesTextArea = createTextArea("Clientes:\n");
         panel1.add(new JScrollPane(clientesTextArea), BorderLayout.CENTER);
 
-        List<Client> clients = Client_Service.getInstance().getUsers();
-        clients.forEach(client -> appendClientInfo(clientesTextArea, client));
+        List<Person> clients = Client_Service.getInstance().getUsers();
+        clients.forEach(person -> appendClientInfo(clientesTextArea, person));
 
         JButton deleteClientButton = createButton("Deletar Cliente", e -> deleteClient());
         panel1.add(deleteClientButton, BorderLayout.SOUTH);
@@ -380,11 +380,12 @@ public class AdminView extends UserView {
         }
     }
 
-    private void appendClientInfo(JTextArea textArea, Client client) {
-        textArea.append("ID: " + client.getId() + "\n");
+    private void appendClientInfo(JTextArea textArea, Person client) {
+        textArea.append("ID: " + client.getPersonId() + "\n");
         textArea.append("Nome: " + client.getName()+ "\n");
         textArea.append("Email: " + client.getEmail() + "\n");
         textArea.append("Data de Aniversário: " + client.getBirthday() + "\n\n");
+        textArea.append("Telefone: " + client.getPhone() + "\n\n");
     }
 
     private void mostrarListaEspera() {

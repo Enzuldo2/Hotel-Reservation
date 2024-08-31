@@ -8,9 +8,9 @@ import java.sql.SQLException;
 
 
 public class ConexaoUtil {
-    private String caminho = "localhost";
-    private String porta = "3306";
-    private String nome = "hotel";
+    private final String caminho = "localhost";
+    private final String porta = "3306";
+    private final String nome = "hotel";
     private String usuario = "root";
     private String senha = "";
     private String url = "jdbc:mysql://" + caminho + ":" + porta + "/" + nome+"?useTimezone=true&serverTimezone=UTC";
@@ -20,7 +20,7 @@ public class ConexaoUtil {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            System.out.println("Erro ao carregar o driver JDBC");
         }
     }
 
@@ -36,8 +36,7 @@ public class ConexaoUtil {
 
     public Connection Connection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection(url, usuario, senha);
-        return connection;
+        return DriverManager.getConnection(url, usuario, senha);
 
     }
 

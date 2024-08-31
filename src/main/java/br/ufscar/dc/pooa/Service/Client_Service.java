@@ -3,6 +3,7 @@ package br.ufscar.dc.pooa.Service;
 
 import br.ufscar.dc.pooa.Model.domain.users.Client;
 import br.ufscar.dc.pooa.Model.domain.users.Factory_Person;
+import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.dao.ClientDAO;
 
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ import java.util.regex.Pattern;
 
 
 public class Client_Service {
-    private List<Client> clients;
+    private List<Person> clients;
 
     private static final Logger logger = Logger.getLogger(Client_Service.class.getName());
     private static Client_Service instance = null;
@@ -38,21 +39,21 @@ public class Client_Service {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(email);
 
-        return matcher.matches();
+        return !matcher.matches();
     }
 
-    public boolean createUser(String username, String password, String email, Date birthday) throws SQLException, ClassNotFoundException, ParseException {
-        if (ClientDAO.userExists(username, password, email, birthday)) {
+    public boolean createUser(String username, String password, String email, Date birthday,String phone) throws SQLException, ClassNotFoundException, ParseException {
+        if (ClientDAO.userExists(username, password, email, birthday,phone)) {
             logger.info("User already exists");
             return false;
         }
-        if (!isValidEmail(email)) {
+        if (isValidEmail(email)) {
             logger.info("Invalid email");
             return false;
         }
-        Client user = (Client) Factory_Person.createPerson(username, password, email, birthday);
+        Client user = (Client) Factory_Person.createPerson(username, password, email, birthday,phone);
         clients.add(user);
-        ClientDAO.createClient(username, password, email, birthday);
+        ClientDAO.createClient(username, password, email, birthday,phone);
         logger.info("User created successfully");
         clients = ClientDAO.readClientslist();
         return true;
@@ -60,34 +61,35 @@ public class Client_Service {
 
 
 
-    public boolean updateUser(Client user) throws SQLException, ClassNotFoundException {
-        for (Client client : clients) {
-            if (client.getId() == user.getPersonId()) {
-                ClientDAO.update(user.getPersonId(), user.getName(), user.getPassword(), user.getEmail(), user.getBirthday());
-
+    public boolean updateUser(Person user) throws SQLException, ClassNotFoundException {
+        for (Person client : clients) {
+            if (client.getPersonId() == user.getPersonId()) {
+                ClientDAO.update(user.getPersonId(), user.getName(), user.getPassword(), user.getEmail(), user.getBirthday(), user.getPhone());
+                clients = ClientDAO.readClientslist();
+                return true;
             }
         }
         return false;
     }
 
 
-    public List<Client> getUsers() throws SQLException, ClassNotFoundException {
+    public List<Person> getUsers() throws SQLException, ClassNotFoundException {
         return clients = ClientDAO.readClientslist();
     }
 
-    public Client getClient(int idCliente) throws SQLException, ClassNotFoundException {
+    public Person getClient(int idCliente) throws SQLException, ClassNotFoundException {
         clients = getUsers();
-        for (Client client : clients) {
-            if (client.getId() == idCliente) {
+        for (Person client : clients) {
+            if (client.getPersonId() == idCliente) {
                 return client;
             }
         }
         return null;
     }
 
-    public Client haveClient(String username,String password) throws SQLException, ClassNotFoundException {
+    public Person haveClient(String username,String password) throws SQLException, ClassNotFoundException {
         clients = getUsers();
-        for (Client client : clients) {
+        for (Person client : clients) {
             if (client.getName().equals(username) && client.getPassword().equals(password)) {
                 return client;
             }
@@ -97,13 +99,13 @@ public class Client_Service {
 
     public void deleteUser(int id) throws SQLException, ClassNotFoundException {
         clients = getUsers();
-        for (Client client : clients) {
-            if (client.getId() == id) {
+        for (Person client : clients) {
+            if (client.getPersonId() == id) {
                 clients.remove(client);
                 try {
                     ClientDAO.delete(id);
                 } catch (SQLException | ClassNotFoundException e) {
-                    e.printStackTrace();
+                    System.out.println("Error deleting user");
                 }
                 break;
             }

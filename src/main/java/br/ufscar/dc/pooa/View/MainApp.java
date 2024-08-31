@@ -3,7 +3,7 @@ package br.ufscar.dc.pooa.View;
 
 
 
-import br.ufscar.dc.pooa.Model.domain.users.Client;
+import br.ufscar.dc.pooa.Model.domain.users.Person;
 import br.ufscar.dc.pooa.Service.Client_Service;
 
 import javax.swing.*;
@@ -21,7 +21,7 @@ public class MainApp extends UserView {
 
 
     @Override
-    protected void createMenuBar(Client user) {
+    protected void createMenuBar(Person user) {
         JMenuBar menuBar = new JMenuBar();
         JMenu optionsMenu = new JMenu("Options");
 
@@ -111,7 +111,7 @@ public class MainApp extends UserView {
 
     private void userlogin(String username, String password) {
         try {
-            Client user = Client_Service.getInstance().haveClient(username, password);
+            Person user = Client_Service.getInstance().haveClient(username, password);
             if(user != null) {
                 showMessageDialog("Login successful!");
                 new ClientView(user);
