@@ -22,7 +22,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Properties;
 import java.util.Base64;
 
@@ -45,10 +44,6 @@ public class GmailService implements Observer  {
     }
 
 
-
-    public void SetEmail(String email){
-        this.email = email;
-    }
 
 
     private static Credential getCredentials() throws Exception {
@@ -106,7 +101,7 @@ public class GmailService implements Observer  {
                         "Para mais informações, entre em contato com a recepção do hotel.\n\n"+
                         "Não responda a este email, ele é gerado automaticamente.");
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Erro ao enviar email de reserva disponível");
             }
         }
         else if(tipo.equals("Reserva_Feita")){
@@ -115,7 +110,7 @@ public class GmailService implements Observer  {
                         "Para mais informações, entre em contato com a recepção do hotel.\n\n"+
                         "Não responda a este email, ele é gerado automaticamente.");
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Erro ao enviar email de reserva feita");
             }
         }
     }

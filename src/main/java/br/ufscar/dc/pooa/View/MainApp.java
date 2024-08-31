@@ -8,7 +8,6 @@ import br.ufscar.dc.pooa.Service.Client_Service;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.ParseException;
 

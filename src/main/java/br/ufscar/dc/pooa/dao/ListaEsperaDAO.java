@@ -1,12 +1,11 @@
 package br.ufscar.dc.pooa.dao;
 
-import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
+
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,6 +37,7 @@ public class ListaEsperaDAO {
         pst.setInt(1, id);
         pst.setString(2, tipo_aviso);
         pst.executeUpdate();
+        connection.close();
     }
 
     public static void deleteLista(Integer id) throws SQLException, ClassNotFoundException {
@@ -46,5 +46,6 @@ public class ListaEsperaDAO {
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setInt(1, id);
         pst.executeUpdate();
+        connection.close();
     }
 }
