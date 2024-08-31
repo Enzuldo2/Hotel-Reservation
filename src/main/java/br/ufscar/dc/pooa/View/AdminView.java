@@ -125,9 +125,13 @@ public class AdminView extends UserView {
             Date dataEndDate = reserva_Service.parseDate(dataFieldEnd.getText());
             Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
             String tipoQuarto = categoriaField.getText();
+            var user = Client_Service.getInstance().getClient(clientId);
+            if(user == null){
+                showMessageDialog("Cliente não encontrado");
+                return;
+            }
 
-
-            if (reserva_Service.makeReservation(Client_Service.getInstance().getClient(clientId), dataAtual, dataInicialDate, dataEndDate, tipoQuarto)) {
+            if (reserva_Service.makeReservation(user, dataAtual, dataInicialDate, dataEndDate, tipoQuarto)) {
                 showMessageDialog("Reserva feita com sucesso!");
             } else {
                 if(dataAtual.equals(dataInicialDate)){
