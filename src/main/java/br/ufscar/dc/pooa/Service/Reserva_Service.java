@@ -31,6 +31,7 @@ public class Reserva_Service {
             Reserva reserva = new Reserva(user, tipo, dataAtual, data_inicial, data_fim, true);
             reservas.add(reserva);
             ReservaDAO.createReserva(user.getPersonId(), new java.sql.Date(dataAtual.getTime()), new java.sql.Date(data_inicial.getTime()), new java.sql.Date(data_fim.getTime()), tipo_quarto, true);
+            Waiting_List_Service.getInstance().notifyReserva_feita(user.getEmail());
             return true;
         }
         return false;

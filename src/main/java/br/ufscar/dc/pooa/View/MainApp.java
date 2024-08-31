@@ -26,21 +26,21 @@ public class MainApp extends UserView {
         JMenuBar menuBar = new JMenuBar();
         JMenu optionsMenu = new JMenu("Options");
 
-        JMenuItem loginItem = createMenuItem("Login", e -> showLoginDialog() , "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\dados_icon.png");
+        JMenuItem loginItem = createMenuItem("Login", e -> showLoginDialog() , "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\dados_icon.png");
         JMenuItem createAccountItem = createMenuItem("Create Account", e -> {
             try {
                 super.showCreateAccountDialog();
             } catch (SQLException | ClassNotFoundException | ParseException ex) {
                 showErrorDialog(ex);
             }
-        },"C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\criar_conta_icon.png");
+        },"C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\criar_conta_icon.png");
         JMenuItem viewJobsItem = createMenuItem("Informações Sobre Disponibilidade de Quartos", e -> {
             try {
                 viewQuartos();
             } catch (SQLException | ClassNotFoundException ex) {
                 throw new RuntimeException(ex);
             }
-        },"C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\quarto_icon.png");
+        },"C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\quarto_icon.png");
 
         optionsMenu.add(loginItem);
         optionsMenu.add(createAccountItem);

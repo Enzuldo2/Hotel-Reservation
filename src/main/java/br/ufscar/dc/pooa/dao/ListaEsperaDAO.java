@@ -20,23 +20,23 @@ public class ListaEsperaDAO {
         ResultSet rs = pst.executeQuery();
         while (rs.next()) {
             int id = rs.getInt("id");
-            String email = rs.getString("email");
+            String tipo_aviso = rs.getString("tipo_aviso");
             if(waitingList.containsKey(id)){
-                waitingList.get(id).add(email);
+                waitingList.get(id).add(tipo_aviso);
             }else{
-                waitingList.put(id, List.of(email));
+                waitingList.put(id, List.of(tipo_aviso));
             }
         }
         connection.close();
         return waitingList;
     }
 
-    public static void createLista(Integer id, String email) throws SQLException, ClassNotFoundException {
+    public static void createLista(Integer id, String tipo_aviso) throws SQLException, ClassNotFoundException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "INSERT INTO lista_espera (id, email) VALUES (?, ?)";
+        String query = "INSERT INTO lista_espera (id, tipo_aviso) VALUES (?, ?)";
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setInt(1, id);
-        pst.setString(2, email);
+        pst.setString(2, tipo_aviso);
         pst.executeUpdate();
     }
 

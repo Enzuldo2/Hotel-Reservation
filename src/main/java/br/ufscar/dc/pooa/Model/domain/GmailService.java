@@ -34,10 +34,22 @@ public class GmailService implements Observer  {
 
     private static final String APPLICATION_NAME = "HotelReservation";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final String TOKENS_DIRECTORY_PATH = "tokens";
+    private static final String TOKENS_DIRECTORY_PATH = "C:\\Users\\enzod\\Desktop\\tokens";
+    private String email;
 
     private static final java.util.List<String> SCOPES = Collections.singletonList(GmailScopes.GMAIL_SEND);
     private static final String CREDENTIALS_FILE_PATH = "C:\\Users\\enzod\\Desktop\\credenciais.json";
+
+    public GmailService(String email){
+        this.email = email;
+    }
+
+
+
+    public void SetEmail(String email){
+        this.email = email;
+    }
+
 
     private static Credential getCredentials() throws Exception {
         File credentialsFile = new File(CREDENTIALS_FILE_PATH);
@@ -87,10 +99,19 @@ public class GmailService implements Observer  {
 
 
     @Override
-    public void update(List<String> emails, Integer id) throws SQLException, ClassNotFoundException {
-        for (String email : emails){
+    public void update(String tipo) throws SQLException, ClassNotFoundException {
+        if(tipo.equals("Reserva_Disponivel")){
             try {
                 sendEmail(email, "(NÃO RESPONDA) Reserva disponível", "A reserva que você estava esperando está disponível!\n" +
+                        "Para mais informações, entre em contato com a recepção do hotel.\n\n"+
+                        "Não responda a este email, ele é gerado automaticamente.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        else if(tipo.equals("Reserva_Feita")){
+            try {
+                sendEmail(email, "(NÃO RESPONDA) Reserva feita", "Sua reserva foi feita com sucesso!\n" +
                         "Para mais informações, entre em contato com a recepção do hotel.\n\n"+
                         "Não responda a este email, ele é gerado automaticamente.");
             } catch (Exception e) {

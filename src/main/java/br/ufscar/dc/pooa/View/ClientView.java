@@ -26,11 +26,11 @@ public class ClientView extends UserView {
         JMenuBar menuBar = new JMenuBar();
         JMenu optionsMenu = new JMenu("Options");
 
-        JMenuItem viewRoomsItem = createMenuItem("Informações Sobre Disponibilidade de Quartos", e -> viewQuartos(), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\quarto_icon.png");
-        JMenuItem makeReservationItem = createMenuItem("Fazer Reserva", e -> reservaQuartoUser(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\reserva_icon.png");
-        JMenuItem viewReservationsItem = createMenuItem("Minhas Reservas", e -> viewReservas(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\icon_hotel2.png");
-        JMenuItem exitItem = createMenuItem("Sair", e -> super.logout(), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\sair_icon.png");
-        JMenuItem olhardados = createMenuItem("Olhar Meus Dados", e -> olharDados(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\dados_icon.png");
+        JMenuItem viewRoomsItem = createMenuItem("Informações Sobre Disponibilidade de Quartos", e -> viewQuartos(), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\quarto_icon.png");
+        JMenuItem makeReservationItem = createMenuItem("Fazer Reserva", e -> reservaQuartoUser(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\reserva_icon.png");
+        JMenuItem viewReservationsItem = createMenuItem("Minhas Reservas", e -> viewReservas(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\icon_hotel2.png");
+        JMenuItem exitItem = createMenuItem("Sair", e -> super.logout(), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\sair_icon.png");
+        JMenuItem olhardados = createMenuItem("Olhar Meus Dados", e -> olharDados(user), "C:\\Users\\enzod\\Desktop\\Hotel-Reservation\\Icons\\dados_icon.png");
 
         optionsMenu.add(viewRoomsItem);
         optionsMenu.add(makeReservationItem);
@@ -140,7 +140,7 @@ public class ClientView extends UserView {
         JTextArea reservaQuartoText = createTextArea("Para reservar um quarto, Informe o periodo da reserva e a Categoria do quarto desejado.\n" +
                 "Temos como Categoria disponiveis:\n" +
                 "Quartos do tipo Familia por 120 reais a diaria, do tipo Single por 70 reais e do tipo Suite por 200 reais a diaria\n" +
-                "Quartos Familia tem capacidade de 4 a 6 pessoas, Single de 1 a 2 pessoas e Suite de 2 a 4 pessoas."+
+                "Quartos Familia tem capacidade de 4 a 6 pessoas, Single de 1 a 2 pessoas e Suite de 2 a 4 pessoas.\n"+
                 "Check-in: 14:00\n"+
                 "Check-out: 12:00\n\n"+
                 "Obrigado por escolher o nosso Hotel!\n"+
