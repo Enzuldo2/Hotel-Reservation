@@ -3,7 +3,7 @@ package br.ufscar.dc.pooa.Model.domain.users;
 
 import java.util.Date;
 
-public class Client implements Person {
+class Client implements Person {
     private int id;
     private String password;
     private String email;
@@ -22,11 +22,7 @@ public class Client implements Person {
         this.setEmail(email);
         this.setPhone(phone);
     }
-
-    public Client() {
-        super();
-    }
-
+    
 
     public void setId(int id) {
         setPersonId(id);

@@ -1,6 +1,7 @@
 package br.ufscar.dc.pooa.dao;
 
-import br.ufscar.dc.pooa.Model.domain.users.Client;
+
+import br.ufscar.dc.pooa.Model.domain.users.Factory_Person;
 import br.ufscar.dc.pooa.Model.domain.users.Person;
 
 import java.sql.Connection;
@@ -21,7 +22,7 @@ public class ClientDAO {
         PreparedStatement pst = connection.prepareStatement(query);
         ResultSet rs = pst.executeQuery();
         while (rs.next()) {
-            Person client = new Client();
+            Person client = Factory_Person.createPerson("null", "null", "null", new Date(), "null");
             settingAtributes(rs, client);
             clients.add(client);
         }
@@ -96,9 +97,9 @@ public class ClientDAO {
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setInt(1, idCliente);
         ResultSet rs = pst.executeQuery();
-        Client client = null;
+        Person client = null;
         if (rs.next()) {
-            client = new Client();
+            client = Factory_Person.createPerson("null", "null", "null", new Date(), "null");
             settingAtributes(rs, client);
         }
         connection.close();
