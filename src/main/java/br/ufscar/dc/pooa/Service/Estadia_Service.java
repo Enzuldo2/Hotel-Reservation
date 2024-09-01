@@ -2,8 +2,8 @@ package br.ufscar.dc.pooa.Service;
 
 import br.ufscar.dc.pooa.Model.domain.Reserva.Estadia;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.users.Person;
+import br.ufscar.dc.pooa.Model.interfaces.Room;
 import br.ufscar.dc.pooa.dao.EstadioDAO;
 import br.ufscar.dc.pooa.dao.QuartoDAO;
 
@@ -35,10 +35,10 @@ public class Estadia_Service {
         if (reserva != null) {
             for (Reserva r : reserva) {
                 if (r.getId() == reservaid) {
-                    DefaultRoom quarto = Quarto_Service.getInstance().getRoom(r.getCategoria().getRoomType());
+                    Room quarto = Quarto_Service.getInstance().getRoom(r.getCategoria().getRoomType());
                     if(quarto != null) {
                         createEstadia(client, quarto, r.getDataEntrada(), r.getDataSaida(), pessoas);
-                        Reserva_Service.getInstance().removeReserva(r); //remove a reserva e exclue a lista de espera
+                        Reserva_Service.getInstance().removeReserva(r.getId()); //remove a reserva e exclue a lista de espera
                         created = true;
                         break;
                     }
@@ -56,10 +56,10 @@ public class Estadia_Service {
         if (reserva != null) {
             for (Reserva r : reserva) {
                 if (r.getId() == reservaid) {
-                    DefaultRoom quarto = Quarto_Service.getInstance().getRoom(r.getCategoria().getRoomType());
+                    Room quarto = Quarto_Service.getInstance().getRoom(r.getCategoria().getRoomType());
                     if(quarto != null) {
                         rerserva_temp = r;
-                        Reserva_Service.getInstance().removeReserva(r); //remove a reserva e exclue a lista de espera
+                        Reserva_Service.getInstance().removeReserva(r.getId()); //remove a reserva e exclue a lista de espera
                         Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
                         var bool = Reserva_Service.getInstance().verifica_Reserva(dataAtual, rerserva_temp.getDataEntrada(), rerserva_temp.getDataSaida(), rerserva_temp.getCategoria().getRoomType());
                         if(bool){
@@ -85,7 +85,7 @@ public class Estadia_Service {
     public boolean makeEstadia_SemReserva(int clientId, Date dataEntrada, Date dataSaida, String tipo_quarto,int pessoas) throws SQLException, ClassNotFoundException {
         boolean created = false;
         var client = Client_Service.getInstance().getClient(clientId);
-        DefaultRoom quarto = Quarto_Service.getInstance().getRoom(tipo_quarto);
+        Room quarto = Quarto_Service.getInstance().getRoom(tipo_quarto);
         Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
         var tem_espaco = Reserva_Service.getInstance().verifica_Reserva(dataAtual, dataEntrada, dataSaida, tipo_quarto);
         if(quarto != null && tem_espaco){ //verifica mesmo assim as reservas, pois cliente pode errar.
@@ -100,10 +100,10 @@ public class Estadia_Service {
 
 
 
-    private void createEstadia(Person cliente, DefaultRoom quarto, Date dataEntrada, Date dataSaida, int pessoas) throws SQLException, ClassNotFoundException {
+    private void createEstadia(Person cliente, Room quarto, Date dataEntrada, Date dataSaida, int pessoas) throws SQLException, ClassNotFoundException {
         EstadioDAO.createEstadia(cliente, quarto, dataEntrada, dataSaida,pessoas);
         quarto.setReserved(true);
-        QuartoDAO.update(quarto.getId(), quarto.getRoomType(), quarto.getDescription(), quarto.getCapacity(), quarto.getHeight(), quarto.getLength(), quarto.getWidth(), true);
+        QuartoDAO.update(quarto.getRoomId(), quarto.getBridgeroom().getRoomType(), quarto.getDescription(), quarto.getCapacity(), quarto.getHeight(), quarto.getLength(), quarto.getWidth(), true);
         estadias = EstadioDAO.readEstadias();
     }
 

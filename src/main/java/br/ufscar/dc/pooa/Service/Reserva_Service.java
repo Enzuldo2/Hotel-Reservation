@@ -108,19 +108,24 @@ public class Reserva_Service {
         return reservas_response;
     }
 
-    public void removeReserva(Reserva reserva) throws SQLException, ClassNotFoundException {
-        ReservaDAO.delete(reserva.getId());
-        Waiting_List_Service.getInstance().delete(reserva.getId());
+    public void removeReserva(int reservaid) throws SQLException, ClassNotFoundException {
+        ReservaDAO.delete(reservaid);
+        Waiting_List_Service.getInstance().delete(reservaid);
         reservas = ReservaDAO.readReservas();
     }
 
     public void CancelReserva(int id) throws SQLException, ClassNotFoundException {
         for (Reserva reserva : ReservaDAO.readReservas()) {
             if (reserva.getId() == id) {
+                Waiting_List_Service waiting_list = Waiting_List_Service.getInstance();
+                var ids = get_Ids(reserva.getDataEntrada(), reserva.getDataSaida(), reserva.getCategoria().getRoomType());
+                waiting_list.notify(id);
+                for (int i : ids) {
+                    waiting_list.delete(i);
+                }
                 reserva.setReserved(false);
-                Waiting_List_Service.getInstance().notify(id);
-                Waiting_List_Service.getInstance().delete(id);
                 ReservaDAO.delete(id);
+                return;
             }
         }
     }

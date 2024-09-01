@@ -5,6 +5,7 @@ import br.ufscar.dc.pooa.Model.domain.rooms.FamilyRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.SingleRoom;
 import br.ufscar.dc.pooa.Model.domain.rooms.SuiteRoom;
 import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
+import br.ufscar.dc.pooa.Model.interfaces.Room;
 import br.ufscar.dc.pooa.dao.QuartoDAO;
 
 import java.sql.SQLException;
@@ -15,7 +16,7 @@ public class Quarto_Service {
 
 
     private static Quarto_Service instance = null;
-    private List<DefaultRoom> rooms;
+    private List<Room> rooms;
 
     public static Quarto_Service getInstance() throws SQLException, ClassNotFoundException {
         if (instance == null) {
@@ -34,7 +35,7 @@ public class Quarto_Service {
         switch (roomType) {
             case "Single": {
                 Bridge_Room bridge_room = new SingleRoom();
-                DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
+                Room room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
                 addRoom(room);
                 created = true;
                 break;
@@ -59,7 +60,7 @@ public class Quarto_Service {
 
     public int quantidade_quartos_para_tipo(String tipo_quarto){
         int quantidade_quartos = 0;
-        for (DefaultRoom room : rooms) {
+        for (Room room : rooms) {
             if (room.getBridgeroom().getRoomType().equals(tipo_quarto)){
                 quantidade_quartos++;
             }
@@ -79,7 +80,7 @@ public class Quarto_Service {
         return null;
     }
 
-    public void addRoom(DefaultRoom room) throws SQLException, ClassNotFoundException {
+    public void addRoom(Room room) throws SQLException, ClassNotFoundException {
         QuartoDAO.createRoom(room.getBridgeroom().getRoomType(), room.getDescription(), room.getCapacity(), room.getHeight(), room.getLength(), room.getWidth(), room.getReservation());
         rooms = QuartoDAO.readRooms();
     }
@@ -89,18 +90,18 @@ public class Quarto_Service {
         rooms = QuartoDAO.readRooms();
     }
 
-    public void updateRoom(DefaultRoom room) throws SQLException, ClassNotFoundException {
+    public void updateRoom(Room room) throws SQLException, ClassNotFoundException {
         QuartoDAO.update(room.getRoomId(), room.getBridgeroom().getRoomType(), room.getDescription(), room.getCapacity(), room.getHeight(), room.getLength(), room.getWidth(), room.getReservation());
         rooms = QuartoDAO.readRooms();
     }
 
-    public List<DefaultRoom> getRooms() throws SQLException, ClassNotFoundException {
+    public List<Room> getRooms() throws SQLException, ClassNotFoundException {
         rooms = QuartoDAO.readRooms();
         return rooms;
     }
 
-    public DefaultRoom getRoom(int roomId) {
-        for (DefaultRoom room : rooms) {
+    public Room getRoom(int roomId) {
+        for (Room room : rooms) {
             if (room.getRoomId() == roomId) {
                 return room;
             }
@@ -108,9 +109,9 @@ public class Quarto_Service {
         return null;
     }
 
-    public DefaultRoom getRoom(String roomType) throws SQLException, ClassNotFoundException {
+    public Room getRoom(String roomType) throws SQLException, ClassNotFoundException {
         rooms = QuartoDAO.readRooms();
-        for (DefaultRoom room : rooms) {
+        for (Room room : rooms) {
             if (room.getBridgeroom().getRoomType().equals(roomType) && !room.getReservation()){
                 return room;
             }

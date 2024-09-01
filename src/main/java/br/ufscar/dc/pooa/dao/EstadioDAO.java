@@ -1,8 +1,8 @@
 package br.ufscar.dc.pooa.dao;
 
 import br.ufscar.dc.pooa.Model.domain.Reserva.Estadia;
-import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.users.Person;
+import br.ufscar.dc.pooa.Model.interfaces.Room;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,12 +15,12 @@ import java.util.List;
 public class EstadioDAO {
 
 
-    public static void createEstadia(Person cliente, DefaultRoom quarto, Date dataEntrada, Date dataSaida, int pessoas) throws SQLException, ClassNotFoundException {
+    public static void createEstadia(Person cliente, Room quarto, Date dataEntrada, Date dataSaida, int pessoas) throws SQLException, ClassNotFoundException {
         Connection connection = ConexaoUtil.getInstance().Connection();
         String query = "INSERT INTO estadia (id_cliente, id_quarto, data_entrada, data_saida,pessoas) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement pst = connection.prepareStatement(query);
         pst.setInt(1, cliente.getPersonId());
-        pst.setInt(2, quarto.getId());
+        pst.setInt(2, quarto.getRoomId());
         pst.setDate(3, new java.sql.Date(dataEntrada.getTime()));
         pst.setDate(4, new java.sql.Date(dataSaida.getTime()));
         pst.setInt(5, pessoas);

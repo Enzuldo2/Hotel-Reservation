@@ -2,8 +2,8 @@ package br.ufscar.dc.pooa.View;
 
 import br.ufscar.dc.pooa.Model.domain.Reserva.Estadia;
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.users.Person;
+import br.ufscar.dc.pooa.Model.interfaces.Room;
 import br.ufscar.dc.pooa.Service.*;
 
 import javax.swing.*;
@@ -317,13 +317,28 @@ public class AdminView extends UserView {
             List<Reserva> reservas = Reserva_Service.getInstance().getReservas();
             reservas.forEach(reserva -> appendReservaInfo(reservasTextArea, reserva));
 
+            JPanel buttonPanel = new JPanel(new FlowLayout());
             JButton cancelReservaButton = createButton("Cancelar Reserva", e -> cancelReserva());
-            panel1.add(cancelReservaButton, BorderLayout.SOUTH);
+            JButton deleteReservaButton = createButton("Deletar Reserva", e -> deleteReserva());
+            buttonPanel.add(cancelReservaButton);
+            buttonPanel.add(deleteReservaButton);
+            panel1.add(buttonPanel, BorderLayout.SOUTH);
         } catch (SQLException | ClassNotFoundException ex) {
             showErrorDialog(ex);
         }
 
         refreshPanel();
+    }
+
+    private void deleteReserva() {
+        int id = Integer.parseInt(showInputDialog("Digite o ID da reserva a ser deletada:"));
+        try {
+            Reserva_Service reservaService = Reserva_Service.getInstance();
+            reservaService.removeReserva(id);
+            showMessageDialog("Reserva deletada com sucesso!");
+        } catch (SQLException | ClassNotFoundException ex) {
+            System.out.println("Erro ao deletar reserva");
+        }
     }
 
     private void viewQuartosAdmin() throws SQLException, ClassNotFoundException {
@@ -333,8 +348,8 @@ public class AdminView extends UserView {
                 "Quartos Familia tem capacidade de 4 a 6 pessoas, Single de 1 a 2 pessoas e Suite de 2 a 4 pessoas.\n");
         panel1.add(new JScrollPane(vagasTextArea), BorderLayout.CENTER);
 
-        List<DefaultRoom> rooms = Quarto_Service.getInstance().getRooms();
-        for (DefaultRoom room : rooms) {
+        List<Room> rooms = Quarto_Service.getInstance().getRooms();
+        for (Room room : rooms) {
             super.appendRoomInfo(vagasTextArea, room);
         }
 

@@ -2,9 +2,7 @@ package br.ufscar.dc.pooa.Model.domain.rooms;
 
 import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
 import br.ufscar.dc.pooa.Model.interfaces.Room;
-import br.ufscar.dc.pooa.dao.QuartoDAO;
 
-import java.sql.SQLException;
 
 public class DefaultRoom  implements Room{
     private int roomId;
@@ -30,10 +28,6 @@ public class DefaultRoom  implements Room{
     }
 
 
-    @Override
-    public Room getRoom() {
-       return this;
-    }
 
     @Override
     public int getRoomId() {
@@ -41,24 +35,6 @@ public class DefaultRoom  implements Room{
     }
 
 
-
-    @Override
-    public boolean updateRoom(Bridge_Room bridge_room) {
-        this.bridge_room = bridge_room;
-        return bridge_room.update_Tipo_Room(bridge_room);
-    }
-
-
-
-    @Override
-    public float area() {
-        return width * length;
-    }
-
-    @Override
-    public float volume() {
-        return width * length * height;
-    }
 
     @Override
     public Bridge_Room getBridgeroom() {
@@ -82,7 +58,7 @@ public class DefaultRoom  implements Room{
         return reservation;
     }   
 
-    public void setReserved(boolean reserved) throws SQLException, ClassNotFoundException {
+    public void setReserved(boolean reserved) {
         this.reservation = reserved;
 
     }
@@ -99,7 +75,7 @@ public class DefaultRoom  implements Room{
         return length;
     }
 
-    public void setLength(float length) throws SQLException, ClassNotFoundException {
+    public void setLength(float length) {
         this.length = length;
     }
 

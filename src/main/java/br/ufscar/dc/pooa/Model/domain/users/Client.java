@@ -29,9 +29,6 @@ class Client implements Person {
     }
 
 
-
-
-
     public int getId() {
         return getPersonId();
     }

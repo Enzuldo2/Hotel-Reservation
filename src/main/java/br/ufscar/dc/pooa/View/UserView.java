@@ -1,8 +1,8 @@
 package br.ufscar.dc.pooa.View;
 
 import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
 import br.ufscar.dc.pooa.Model.domain.users.Person;
+import br.ufscar.dc.pooa.Model.interfaces.Room;
 import br.ufscar.dc.pooa.Service.Client_Service;
 import br.ufscar.dc.pooa.Service.Quarto_Service;
 import br.ufscar.dc.pooa.Service.Reserva_Service;
@@ -83,10 +83,10 @@ public abstract class UserView {
         Date dataAtual = java.sql.Date.valueOf(LocalDate.now());
         Date dataFim = java.sql.Date.valueOf(LocalDate.now().plusDays(1));
         JTextArea textArea = new JTextArea();
-        List<DefaultRoom> rooms = Quarto_Service.getInstance().getRooms();
+        List<Room> rooms = Quarto_Service.getInstance().getRooms();
         int tipos = 0;
         if(Reserva_Service.getInstance().verifica_Reserva(dataAtual, dataAtual, dataFim, "Single")) {
-            for (DefaultRoom room : rooms) {
+            for (Room room : rooms) {
                 if (room.getBridgeroom().getRoomType().equals("Single") && !room.isReserved()) {
                     textArea.append("Temos Quarto Single disponivel para hoje!\n");
                     tipos++;
@@ -96,7 +96,7 @@ public abstract class UserView {
 
         }
         if(Reserva_Service.getInstance().verifica_Reserva(dataAtual, dataAtual, dataFim, "Familia")) {
-            for (DefaultRoom room : rooms) {
+            for (Room room : rooms) {
                 if (room.getBridgeroom().getRoomType().equals("Familia") && !room.isReserved()) {
                     textArea.append("Temos Quarto Familia disponivel para hoje!\n");
                     tipos++;
@@ -105,7 +105,7 @@ public abstract class UserView {
             }
         }
         if(Reserva_Service.getInstance().verifica_Reserva(dataAtual, dataAtual, dataFim, "Suite")) {
-            for (DefaultRoom room : rooms) {
+            for (Room room : rooms) {
                 if (room.getBridgeroom().getRoomType().equals("Suite") && !room.isReserved()) {
                     textArea.append("Temos Quarto Suite disponivel para hoje!\n");
                     tipos++;
@@ -121,8 +121,8 @@ public abstract class UserView {
         JOptionPane.showMessageDialog(null, new JScrollPane(textArea), "Quartos Disponíveis", JOptionPane.INFORMATION_MESSAGE);
     }
 
-    void appendRoomInfo(JTextArea textArea, DefaultRoom room) {
-        textArea.append("ID: " + room.getId() + "\n");
+    void appendRoomInfo(JTextArea textArea, Room room) {
+        textArea.append("ID: " + room.getRoomId() + "\n");
         textArea.append("Tipo: " + room.getBridgeroom().getRoomType() + "\n");
         textArea.append("Descrição: " + room.getDescription() + "\n");
         textArea.append("Comprimento: " + room.getLength() + "\n");
