@@ -1,4 +1,4 @@
-package br.ufscar.dc.pooa.Model.interfaces;
+package br.ufscar.dc.pooa.Model.rooms;
 
 import java.sql.SQLException;
 

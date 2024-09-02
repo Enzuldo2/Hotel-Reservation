@@ -3,7 +3,7 @@ package br.ufscar.dc.pooa.View;
 
 
 
-import br.ufscar.dc.pooa.Model.domain.users.Person;
+import br.ufscar.dc.pooa.Model.users.Person;
 import br.ufscar.dc.pooa.Service.Client_Service;
 
 import javax.swing.*;
@@ -129,4 +129,10 @@ public class MainApp extends UserView {
     private void closeWindow() {
         frame.dispose();
     }
+
+    public static void main(String[] args) {
+        new MainApp();
+    }
 }
+
+

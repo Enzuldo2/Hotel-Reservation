@@ -1,9 +1,9 @@
 package br.ufscar.dc.pooa.View;
 
-import br.ufscar.dc.pooa.Model.domain.Reserva.Estadia;
-import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.users.Person;
-import br.ufscar.dc.pooa.Model.interfaces.Room;
+import br.ufscar.dc.pooa.Model.Estadia;
+import br.ufscar.dc.pooa.Model.Reserva;
+import br.ufscar.dc.pooa.Model.users.Person;
+import br.ufscar.dc.pooa.Model.rooms.Room;
 import br.ufscar.dc.pooa.Service.*;
 
 import javax.swing.*;

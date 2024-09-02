@@ -1,10 +1,10 @@
 package br.ufscar.dc.pooa.dao;
 
-import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.rooms.FamilyRoom;
-import br.ufscar.dc.pooa.Model.domain.rooms.SingleRoom;
-import br.ufscar.dc.pooa.Model.domain.rooms.SuiteRoom;
-import br.ufscar.dc.pooa.Model.domain.users.Person;
+import br.ufscar.dc.pooa.Model.Reserva;
+import br.ufscar.dc.pooa.Model.rooms.FamilyRoom;
+import br.ufscar.dc.pooa.Model.rooms.SingleRoom;
+import br.ufscar.dc.pooa.Model.rooms.SuiteRoom;
+import br.ufscar.dc.pooa.Model.users.Person;
 
 import java.sql.*;
 import java.util.ArrayList;

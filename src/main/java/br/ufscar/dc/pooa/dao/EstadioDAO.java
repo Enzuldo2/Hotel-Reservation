@@ -1,8 +1,8 @@
 package br.ufscar.dc.pooa.dao;
 
-import br.ufscar.dc.pooa.Model.domain.Reserva.Estadia;
-import br.ufscar.dc.pooa.Model.domain.users.Person;
-import br.ufscar.dc.pooa.Model.interfaces.Room;
+import br.ufscar.dc.pooa.Model.Estadia;
+import br.ufscar.dc.pooa.Model.users.Person;
+import br.ufscar.dc.pooa.Model.rooms.Room;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

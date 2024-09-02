@@ -1,13 +1,10 @@
-package br.ufscar.dc.pooa.Model.domain.rooms;
+package br.ufscar.dc.pooa.Model.rooms;
 
-import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
+public class FamilyRoom implements Bridge_Room {
+    private Float roomPrice = 100f;
 
-public class SuiteRoom implements Bridge_Room {
 
-    private Float roomPrice = 200f;
-
-    public SuiteRoom() {
-
+    public FamilyRoom() {
     }
 
     @Override
@@ -27,12 +24,11 @@ public class SuiteRoom implements Bridge_Room {
 
     @Override
     public String getRoomType() {
-        return "Suite";
+        return "Familia";
     }
 
     @Override
     public Float getRoomPrice() {
         return roomPrice;
     }
-
 }

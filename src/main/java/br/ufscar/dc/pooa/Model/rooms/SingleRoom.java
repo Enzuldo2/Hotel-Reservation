@@ -1,6 +1,4 @@
-package br.ufscar.dc.pooa.Model.domain.rooms;
-
-import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
+package br.ufscar.dc.pooa.Model.rooms;
 
 public class SingleRoom implements Bridge_Room {
     private Float roomPrice = 70f;

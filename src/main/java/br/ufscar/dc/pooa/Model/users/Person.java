@@ -1,4 +1,4 @@
-package br.ufscar.dc.pooa.Model.domain.users;
+package br.ufscar.dc.pooa.Model.users;
 
 
 import java.util.Date;

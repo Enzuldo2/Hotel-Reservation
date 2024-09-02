@@ -1,7 +1,4 @@
-package br.ufscar.dc.pooa.Model.domain.rooms;
-
-import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
-import br.ufscar.dc.pooa.Model.interfaces.Room;
+package br.ufscar.dc.pooa.Model.rooms;
 
 
 public class DefaultRoom  implements Room{

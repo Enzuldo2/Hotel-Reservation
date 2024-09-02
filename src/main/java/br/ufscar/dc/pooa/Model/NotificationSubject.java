@@ -1,4 +1,4 @@
-package br.ufscar.dc.pooa.Model.domain;
+package br.ufscar.dc.pooa.Model;
 
 
 

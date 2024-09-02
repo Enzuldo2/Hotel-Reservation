@@ -1,4 +1,4 @@
-package br.ufscar.dc.pooa.Model.interfaces;
+package br.ufscar.dc.pooa.Model.rooms;
 
 public interface Bridge_Room {
     Bridge_Room get_Tipo_Room();

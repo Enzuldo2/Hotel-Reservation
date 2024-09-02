@@ -1,7 +1,7 @@
-package br.ufscar.dc.pooa.Model.domain.Reserva;
+package br.ufscar.dc.pooa.Model;
 
-import br.ufscar.dc.pooa.Model.domain.users.Person;
-import br.ufscar.dc.pooa.Model.interfaces.Room;
+import br.ufscar.dc.pooa.Model.users.Person;
+import br.ufscar.dc.pooa.Model.rooms.Room;
 
 import java.util.Date;
 

@@ -1,8 +1,8 @@
 package br.ufscar.dc.pooa.Service;
 
 
-import br.ufscar.dc.pooa.Model.domain.GmailService;
-import br.ufscar.dc.pooa.Model.domain.NotificationSubject;
+import br.ufscar.dc.pooa.Model.GmailService;
+import br.ufscar.dc.pooa.Model.NotificationSubject;
 import br.ufscar.dc.pooa.dao.ListaEsperaDAO;
 
 import java.sql.SQLException;

@@ -1,11 +1,9 @@
 package br.ufscar.dc.pooa.Service;
 
-import br.ufscar.dc.pooa.Model.domain.rooms.DefaultRoom;
-import br.ufscar.dc.pooa.Model.domain.rooms.FamilyRoom;
-import br.ufscar.dc.pooa.Model.domain.rooms.SingleRoom;
-import br.ufscar.dc.pooa.Model.domain.rooms.SuiteRoom;
-import br.ufscar.dc.pooa.Model.interfaces.Bridge_Room;
-import br.ufscar.dc.pooa.Model.interfaces.Room;
+import br.ufscar.dc.pooa.Model.rooms.FactoryRoom;
+import br.ufscar.dc.pooa.Model.rooms.Factory_Bridge_Room;
+import br.ufscar.dc.pooa.Model.rooms.Bridge_Room;
+import br.ufscar.dc.pooa.Model.rooms.Room;
 import br.ufscar.dc.pooa.dao.QuartoDAO;
 
 import java.sql.SQLException;
@@ -32,30 +30,27 @@ public class Quarto_Service {
 
     public boolean createRoom(String roomType, int roomCapacity, String roomDescription, float roomLength, float roomWidth, float roomHeight) throws SQLException, ClassNotFoundException {
         boolean created = false;
-        switch (roomType) {
-            case "Single": {
-                Bridge_Room bridge_room = new SingleRoom();
-                Room room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
-                addRoom(room);
-                created = true;
-                break;
-            }
-            case "Suite": {
-                Bridge_Room bridge_room = new SuiteRoom();
-                DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
-                addRoom(room);
-                created = true;
-                break;
-            }
-            case "Familia": {
-                Bridge_Room bridge_room = new FamilyRoom();
-                DefaultRoom room = new DefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
-                addRoom(room);
-                created = true;
-                break;
-            }
+        var bridge_room = getBridgeRoom(roomType);
+        if (bridge_room != null) {
+            created = true;
         }
+        var room  = FactoryRoom.createDefaultRoom(bridge_room, roomCapacity, roomDescription, roomLength, roomWidth, roomHeight);
+        addRoom(room);
         return created;
+    }
+
+    Bridge_Room getBridgeRoom(String roomType) {
+        var factory = new Factory_Bridge_Room();
+        switch (roomType) {
+            case "Suite":
+                return factory.createSuiteRoom();
+            case "Familia":
+                return factory.createFamiliaRoom();
+            case "Single":
+                return factory.createSingleRoom();
+            default:
+                return null;
+        }
     }
 
     public int quantidade_quartos_para_tipo(String tipo_quarto){
@@ -66,18 +61,6 @@ public class Quarto_Service {
             }
         }
         return quantidade_quartos;
-    }
-
-    public Bridge_Room getBridgeRoom(String tipo_quarto){
-        switch (tipo_quarto) {
-            case "Single":
-                return new SingleRoom();
-            case "Suite":
-                return new SuiteRoom();
-            case "Familia":
-                return new FamilyRoom();
-        }
-        return null;
     }
 
     public void addRoom(Room room) throws SQLException, ClassNotFoundException {

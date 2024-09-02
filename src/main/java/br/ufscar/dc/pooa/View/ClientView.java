@@ -1,6 +1,6 @@
 package br.ufscar.dc.pooa.View;
-import br.ufscar.dc.pooa.Model.domain.Reserva.Reserva;
-import br.ufscar.dc.pooa.Model.domain.users.Person;
+import br.ufscar.dc.pooa.Model.Reserva;
+import br.ufscar.dc.pooa.Model.users.Person;
 import br.ufscar.dc.pooa.Service.Client_Service;
 import br.ufscar.dc.pooa.Service.Reserva_Service;
 
