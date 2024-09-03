@@ -110,7 +110,7 @@ public class GmailService implements Observer  {
                         "Para mais informações, entre em contato com a recepção do hotel.\n\n"+
                         "Não responda a este email, ele é gerado automaticamente.");
             } catch (Exception e) {
-                System.out.println("Erro ao enviar email de reserva feita");
+                e.printStackTrace();
             }
         }
     }

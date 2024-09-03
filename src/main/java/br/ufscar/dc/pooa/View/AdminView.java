@@ -409,7 +409,7 @@ public class AdminView extends UserView {
         panel1.add(new JScrollPane(listaEsperaTextArea), BorderLayout.CENTER);
 
         try {
-            var waitList = Waiting_List_Service.getInstance().getListaEspera();
+            var waitList = Notification_Service.getInstance().getListaEspera();
             if (waitList == null) {
                 listaEsperaTextArea.append("Nenhum cliente na lista de espera.\n");
             } else {
@@ -430,7 +430,7 @@ public class AdminView extends UserView {
 
     private void deleteWaitList() {
         try {
-            Waiting_List_Service.getInstance().delete(Integer.parseInt(showInputDialog("Digite o ID da reserva a ser cancelada:")));
+            Notification_Service.getInstance().delete(Integer.parseInt(showInputDialog("Digite o ID da reserva a ser cancelada:")));
             showMessageDialog("Lista de espera deletada com sucesso!");
         } catch (SQLException | ClassNotFoundException ex) {
             showErrorDialog(ex);

@@ -12,13 +12,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-public class Waiting_List_Service {
-    private static Waiting_List_Service instance = null;
+public class Notification_Service {
+    private static Notification_Service instance = null;
     private NotificationSubject subject = new NotificationSubject();
     private HashMap<Integer, List<String>> waitingList;
 
 
-    private Waiting_List_Service() throws SQLException, ClassNotFoundException {
+    private Notification_Service() throws SQLException, ClassNotFoundException {
         waitingList = ListaEsperaDAO.readLista();
         for (Integer key : waitingList.keySet()) {
             for (String tipo : waitingList.get(key)) {
@@ -37,9 +37,9 @@ public class Waiting_List_Service {
         return matcher.matches();
     }
 
-    public static Waiting_List_Service getInstance() throws SQLException, ClassNotFoundException {
+    public static Notification_Service getInstance() throws SQLException, ClassNotFoundException {
         if (instance == null) {
-            instance = new Waiting_List_Service();
+            instance = new Notification_Service();
         }
         return instance;
     }

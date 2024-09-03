@@ -6,7 +6,7 @@ import br.ufscar.dc.pooa.Model.rooms.Room;
 import br.ufscar.dc.pooa.Service.Client_Service;
 import br.ufscar.dc.pooa.Service.Quarto_Service;
 import br.ufscar.dc.pooa.Service.Reserva_Service;
-import br.ufscar.dc.pooa.Service.Waiting_List_Service;
+import br.ufscar.dc.pooa.Service.Notification_Service;
 
 import javax.swing.*;
 import java.awt.*;
@@ -205,7 +205,7 @@ public abstract class UserView {
         if (JOptionPane.showConfirmDialog(null, "Quarto não disponível. Deseja entrar na lista de espera?", "Lista de Espera", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             try {
                 for (Integer id : ids) {
-                    Waiting_List_Service.getInstance().attach(id, user.getEmail());
+                    Notification_Service.getInstance().attach(id, user.getEmail());
                 }
                 showMessageDialog("Adicionado à lista de espera com sucesso!\n" +
                         "Você será notificado por email quando um quarto estiver disponível. Olhe o Spam!");

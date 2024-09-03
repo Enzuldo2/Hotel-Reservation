@@ -31,7 +31,7 @@ public class Reserva_Service {
             Reserva reserva = new Reserva(user, tipo, dataAtual, data_inicial, data_fim, true);
             reservas.add(reserva);
             ReservaDAO.createReserva(user.getPersonId(), new java.sql.Date(dataAtual.getTime()), new java.sql.Date(data_inicial.getTime()), new java.sql.Date(data_fim.getTime()), tipo_quarto, true);
-            Waiting_List_Service.getInstance().notifyReserva_feita(user.getEmail());
+            Notification_Service.getInstance().notifyReserva_feita(user.getEmail());
             return true;
         }
         return false;
@@ -110,14 +110,14 @@ public class Reserva_Service {
 
     public void removeReserva(int reservaid) throws SQLException, ClassNotFoundException {
         ReservaDAO.delete(reservaid);
-        Waiting_List_Service.getInstance().delete(reservaid);
+        Notification_Service.getInstance().delete(reservaid);
         reservas = ReservaDAO.readReservas();
     }
 
     public void CancelReserva(int id) throws SQLException, ClassNotFoundException {
         for (Reserva reserva : ReservaDAO.readReservas()) {
             if (reserva.getId() == id) {
-                Waiting_List_Service waiting_list = Waiting_List_Service.getInstance();
+                Notification_Service waiting_list = Notification_Service.getInstance();
                 var ids = get_Ids(reserva.getDataEntrada(), reserva.getDataSaida(), reserva.getCategoria().getRoomType());
                 waiting_list.notify(id);
                 for (int i : ids) {
