@@ -5,7 +5,7 @@ import br.ufscar.dc.pooa.Model.Reserva;
 import br.ufscar.dc.pooa.Model.users.Person;
 import br.ufscar.dc.pooa.Model.rooms.Room;
 import br.ufscar.dc.pooa.dao.EstadioDAO;
-import br.ufscar.dc.pooa.dao.QuartoDAO;
+
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -103,7 +103,7 @@ public class Estadia_Service {
     private void createEstadia(Person cliente, Room quarto, Date dataEntrada, Date dataSaida, int pessoas) throws SQLException, ClassNotFoundException {
         EstadioDAO.createEstadia(cliente, quarto, dataEntrada, dataSaida,pessoas);
         quarto.setReserved(true);
-        QuartoDAO.update(quarto.getRoomId(), quarto.getBridgeroom().getRoomType(), quarto.getDescription(), quarto.getCapacity(), quarto.getHeight(), quarto.getLength(), quarto.getWidth(), true);
+        Quarto_Service.getInstance().updateRoom(quarto);
         estadias = EstadioDAO.readEstadias();
     }
 

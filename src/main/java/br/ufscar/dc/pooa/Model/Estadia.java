@@ -13,14 +13,6 @@ public class Estadia {
     private Date dataSaida;
     private int pessoas;
 
-    public Estadia(int id, Person cliente, Room quarto, Date dataEntrada, Date dataSaida,int pessoas) {
-        this.id = id;
-        this.cliente = cliente;
-        this.quarto = quarto;
-        this.dataEntrada = dataEntrada;
-        this.dataSaida = dataSaida;
-        this.pessoas = pessoas;
-    }
 
     public Estadia() {
 
@@ -76,15 +68,5 @@ public class Estadia {
         this.dataSaida = dataSaida;
     }
 
-    public float getPreco() {
-        return quarto.getBridgeroom().getRoomPrice();
-    }
 
-    public float getPrecoTotal() {
-        return getPreco() * (dataSaida.getTime() - dataEntrada.getTime());
-    }
-
-    public boolean isReservado() {
-        return quarto.getReservation();
-    }
 }
