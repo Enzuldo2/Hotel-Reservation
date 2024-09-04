@@ -78,12 +78,11 @@ public class ClientDAO {
         connection.close();
     }
 
-    public static boolean userExists(String username, String password, String email, Date birthday,String phone) throws SQLException, ClassNotFoundException {
+    public static boolean userExists(String username) throws SQLException, ClassNotFoundException {
         Connection connection = ConexaoUtil.getInstance().Connection();
-        String query = "SELECT COUNT(*) FROM client WHERE name = ? AND password = ? AND email = ? AND birthday = ? AND telefone = ?";
+        String query = "SELECT COUNT(*) FROM client WHERE name = ? ";
         PreparedStatement pst = connection.prepareStatement(query);
-        preparingStatment(pst ,username, password, email, birthday, phone);
-
+        pst.setString(1, username);
         ResultSet rs = pst.executeQuery();
         rs.next();
         boolean clientExists = rs.getInt(1) > 0;

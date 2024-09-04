@@ -43,7 +43,7 @@ public class Client_Service {
     }
 
     public boolean createUser(String username, String password, String email, Date birthday,String phone) throws SQLException, ClassNotFoundException, ParseException {
-        if (ClientDAO.userExists(username, password, email, birthday,phone)) {
+        if (ClientDAO.userExists(username)) {
             logger.info("User already exists");
             return false;
         }
