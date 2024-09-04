@@ -2,7 +2,7 @@
 ### Como Rodar o Programa para teste na maquina
 Baixe o Xamp para iniciar o BD. baixe em [https://www.apachefriends.org/pt_br/download.html](https://www.apachefriends.org/pt_br/download.html).
 usando como MySQL como Banco de dados, usando a ferramenta XAMP para gerir o banco, local do BD : [http://localhost/phpmyadmin/index.php?route=/sql&db=hotel&table=client&pos=0](http://localhost/phpmyadmin/index.php?route=/database).
-Va para o link do BD após dar Start no Apache e MySQL. e crie as tabelas como estão no arquivo de DAO.
+Va para o link do BD após dar Start no Apache e MySQL. Crie um novo sistema dando New na esquerda superior e  crie as tabelas como estão no arquivo de DAO.
 IMPORTANTE, o sistema é feito utilizando o id como chave primária e ela é auto Incrementada pelo próprio BD, ATIVE ESSA OPÇÃO NA HORA DE CRIAR A TABELA.
 depois de criar as tabelas necessárias no BD, você pode rodar o programa e ele funcionara perfeitamente.
 ### Sobre
